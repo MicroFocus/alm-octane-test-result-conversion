@@ -1,0 +1,36 @@
+<testsuites id="20140612_170519" name="New_configuration (14/06/12 17:05:19)" tests="225"
+  failures="1262" time="0.001">
+  <testsuite id="codereview.cobol.analysisProvider" name="COBOL Code Review" tests="45"
+    failures="17" time="0.001">
+    <testcase id="codereview.cobol.rules.ProgramIdRule"
+      name="Use a program name that matches the source file name" time="0.001">
+      <failure message="PROGRAM.cbl:2 Use a program name that matches the source file name"
+        type="WARNING">
+        WARNING: Use a program name that matches the source file name
+        Category: COBOL Code Review – Naming Conventions
+        File: /project/PROGRAM.cbl
+        Line: 2
+      </failure>
+    </testcase>
+  </testsuite>
+  <testsuite errors="0" failures="1" name="com.howtodoinjava.junit5.examples.xmlReport.HelloTest"
+    skipped="0" tests="2" time="0.076" version="3.0">
+    <properties>
+      <property name="java.specification.version" value="17" />
+      <property name="sun.cpu.isalist" value="amd64" />
+      <property name="sun.jnu.encoding" value="Cp1252" />
+      <property name="java.class.path" value="..." />
+      <property name="java.vm.vendor" value="Oracle Corporation" />
+    </properties>
+    <testcase classname="com.howtodoinjava.junit5.examples.xmlReport.HelloTest" name="testOne"
+      time="0.04" />
+    <testcase classname="com.howtodoinjava.junit5.examples.xmlReport.HelloTest" name="testTwo"
+      time="0.008">
+      <failure message="expected: &lt;true&gt; but was: &lt;false&gt;"
+        type="org.opentest4j.AssertionFailedError">
+        <![CDATA[org.opentest4j.AssertionFailedError: expected: <true>but was: <false>at 
+        org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)...]]>
+      </failure>
+    </testcase>
+  </testsuite>
+</testsuites>

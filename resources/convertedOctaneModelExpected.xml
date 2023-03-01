@@ -1,0 +1,20 @@
+<test_result>
+  <build build_id="myBuildId" build_name="myBuild" job_id="job1" job_name="job1" server_id="123"
+    sub_type="sub" />
+  <test_fields>
+    <test_field type="type1" value="val1" />
+    <test_field type="type2" value="val2" />
+  </test_fields>
+  <test_runs>
+    <test_run class="myClass" duration="1233" external_report_url="erep1" external_run_id="er1"
+      external_test_id="et1" module="myModule" name="runName1" package="pack1" run_type="auto1"
+      started="1234" status="Failed">
+      <description>desc</description>
+      <error message="error msg" type="err">Error message</error>
+    </test_run>
+    <test_run class="myClass" duration="1233" module="myModule" name="runName2" package="pack2"
+      run_type="auto2" started="1234" status="Passed">
+      <description>desc</description>
+    </test_run>
+  </test_runs>
+</test_result>

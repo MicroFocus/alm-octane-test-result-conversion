@@ -1,0 +1,29 @@
+<test_result>
+  <build build_id="123" job_id="myJob" server_id="serverId" />
+  <test_fields>
+    <test_field type="Test_Level" value="Unit Test" />
+    <test_field type="Test_Type" value="Sanity" />
+    <test_field type="Framework" value="JUnit" />
+  </test_fields>
+  <test_runs>
+    <test_run module="" name="Use a program name that matches the source file name" status="Failed"
+      duration="0">
+      <error message="PROGRAM.cbl:2 Use a program name that matches the source file name"
+        type="WARNING">
+        WARNING: Use a program name that matches the source file name
+        Category: COBOL Code Review – Naming Conventions
+        File: /project/PROGRAM.cbl
+        Line: 2
+      </error>
+    </test_run>
+    <test_run module="" class="com.howtodoinjava.junit5.examples.xmlReport.HelloTest" name="testOne"
+      status="Passed" duration="0" />
+    <test_run module="" class="com.howtodoinjava.junit5.examples.xmlReport.HelloTest" name="testTwo"
+      status="Failed" duration="0">
+      <error message="expected: &lt;true&gt; but was: &lt;false&gt;"
+        type="org.opentest4j.AssertionFailedError">
+        org.opentest4j.AssertionFailedError: expected: &lt;true&gt;but was: &lt;false&gt;at 
+        org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)...</error>
+    </test_run>
+  </test_runs>
+</test_result>
