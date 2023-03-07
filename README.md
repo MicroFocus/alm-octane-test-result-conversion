@@ -1,4 +1,4 @@
-# alm-octane-test-result-convertion
+# alm-octane-test-result-conversion
 A node library for converting different kinds of test reports into ALM Octane format.
 
 ## Usage example
@@ -22,5 +22,5 @@ const convertedXML = convertJUnitXMLToOctaneXML(xml, buildConfig);
 
 ## Change log
 ### 1.0.0
-- Allows convertion from JUnit format XML to ALM Octane format XML via the use of the `convertJUnitXMLToOctaneXML` method.
+- Allows conversion from JUnit format XML to ALM Octane format XML via the `convertJUnitXMLToOctaneXML` method.
 
