@@ -21,6 +21,6 @@ const convertedXML = convertJUnitXMLToOctaneXML(xml, buildConfig);
 ```
 
 ## Change log
-### 1.0.0
+### 1.0.1
 - Allows conversion from JUnit format XML to ALM Octane format XML via the `convertJUnitXMLToOctaneXML` method.
 
