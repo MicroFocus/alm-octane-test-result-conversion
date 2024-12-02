@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="test_result" type="testResultType"/>
+
+	<xs:complexType name="testResultType">
+		<xs:sequence>
+
+						<xs:element name="build" type="buildContext" minOccurs="0" maxOccurs="1"/>
+						
+			<xs:element name="suite_ref" type="suiteRefType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="program_ref" type="refType" minOccurs="0" maxOccurs="1" />
+			<xs:choice minOccurs="0" maxOccurs="1">
+				<xs:element name="release_ref" type="refType"/>
+				<xs:element name="release" type="releaseType"/>
+			</xs:choice>
+			<xs:element name="milestone_ref" type="refType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="backlog_items" type="backlogItemsType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="product_areas" type="productAreasType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="test_fields" type="fieldsType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="environment" type="tagsType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="test_runs" type="testsType" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="buildContext">
+		<xs:attribute name="server_id" type="string255" use="required"/>
+		<xs:attribute name="job_id" type="string255" use="required"/>
+		<xs:attribute name="job_name" type="string255" use="optional"/>
+		<xs:attribute name="build_id" type="string255" use="required"/>
+		<xs:attribute name="build_name" type="string255" use="optional"/>
+		<xs:attribute name="sub_type" type="string0_255" use="optional"/>
+	</xs:complexType>
+
+	<xs:complexType name="releaseType">
+		<xs:attribute name="name" type="string255" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="backlogItemsType">
+		<xs:sequence>
+			<xs:element name="backlog_item_ref" type="refType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="productAreasType">
+		<xs:sequence>
+			<xs:element name="product_area_ref" type="refType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="fieldsType">
+		<xs:sequence>
+			<xs:element name="test_field" type="fieldType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="fieldType">
+		<xs:attribute name="type" type="testFieldType" use="required"/>
+		<xs:attribute name="value" type="string255" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="refType">
+		<xs:attribute name="id" type="xs:long" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="suiteRefType">
+		<xs:attribute name="id" type="xs:long" use="required"/>
+		<xs:attribute name="external_run_id" type="string0_255" use="optional"/>
+		<xs:attribute name="component" type="string0_255" use="optional"/>
+	</xs:complexType>
+
+	<xs:simpleType name="string0_255">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="255"/>
+			<xs:minLength value="0"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="string255">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="255"/>
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="string3800">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="3800"/>
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="string0_3800">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="3800"/>
+			<xs:minLength value="0"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="tagsType">
+		<xs:sequence>
+			<xs:element name="taxonomy" type="tagType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="tagType">
+		<xs:attribute name="type" type="string255" use="required"/>
+		<xs:attribute name="value" type="string255" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="testsType">
+		<xs:choice minOccurs="1" maxOccurs="1">
+			<xs:element name="test_run" type="testType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="gherkin_test_run" type="gherkinTestType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:simpleType name="testFieldType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Test_Level"/>
+			<xs:enumeration value="Test_Type"/>
+			<xs:enumeration value="Testing_Tool_Type"/>
+			<xs:enumeration value="Framework"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="nativeStatusType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Passed"/>
+			<xs:enumeration value="Skipped"/>
+			<xs:enumeration value="Failed"/>
+			<xs:enumeration value="Planned"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType mixed="true" name="errorType">
+		<xs:attribute name="type" type="xs:string" use="optional"/>
+		<xs:attribute name="message" type="xs:string" use="optional"/>
+	</xs:complexType>
+
+	<xs:complexType name="testType">
+		<xs:sequence>
+			<xs:element name="suite_ref" type="suiteRefType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="program_ref" type="refType" minOccurs="0" maxOccurs="1" />
+			<xs:choice minOccurs="0" maxOccurs="1">
+				<xs:element name="release_ref" type="refType"/>
+				<xs:element name="release" type="releaseType"/>
+			</xs:choice>
+			<xs:element name="milestone_ref" type="refType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="backlog_items" type="backlogItemsType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="product_areas" type="productAreasType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="test_fields" type="fieldsType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="environment" type="tagsType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="error" type="errorType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="steps" type="stepsType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="module" type="string0_255" use="optional"/>
+		<xs:attribute name="package" type="string0_255" use="optional"/>
+		<xs:attribute name="class" type="string0_255" use="optional"/>
+		<xs:attribute name="name" type="string255" use="required"/>
+		<xs:attribute name="run_name" type="string255" use="optional"/>
+		<xs:attribute name="duration" type="xs:long" use="required"/>
+		<xs:attribute name="status" type="nativeStatusType" use="required"/>
+		<xs:attribute name="manual" type="xs:boolean" default="false"/>
+		<xs:attribute name="started" type="xs:long" use="optional"/>
+		<xs:attribute name="external_report_url" type="urlType" use="optional"/>
+		<xs:attribute name="external_test_id" type="string0_255" use="optional"/>
+		<xs:attribute name="external_run_id" type="string0_255" use="optional"/>
+		<xs:attribute name="run_type" type="string0_255" use="optional"/>
+
+	</xs:complexType>
+
+	<xs:complexType name="gherkinTestType">
+		<xs:sequence>
+			<xs:element name="feature" type="featureType"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="string0_255" use="required"/>
+		<xs:attribute name="duration" type="xs:long" use="required"/>
+		<xs:attribute name="status" type="nativeStatusType" use="required"/>
+		<xs:attribute name="external_run_id" type="string0_255" use="optional"/>
+	</xs:complexType>
+
+	<xs:complexType name="featureType">
+		<xs:sequence>
+			<xs:element name="file" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="scenarios" type="scenariosType" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="string0_255" use="required"/>
+		<xs:attribute name="path" type="string255" use="required"/>
+		<xs:attribute name="identifier" type="string0_255" use="optional"/>
+		<xs:attribute name="tag" type="string0_255" use="required"/>
+				        <xs:attribute name="started" type="xs:long" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="scenariosType">
+		<xs:sequence>
+			<xs:element name="background" type="backgroundType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="scenario" type="scenarioType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="backgroundType">
+		<xs:sequence minOccurs="0" maxOccurs="1">
+			<xs:element name="steps" type="backgroundStepsType"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="backgroundStepsType">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="step" type="backgroundStepType"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="backgroundStepType">
+		<xs:sequence minOccurs="0" maxOccurs="1">
+			<xs:element name="error_message" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="string3800" use="required"/>
+		<xs:attribute name="duration" type="xs:long" use="optional"/>
+		<xs:attribute name="status" type="string255" use="optional"/>
+	</xs:complexType>
+
+	<xs:complexType name="scenarioType">
+		<xs:sequence>
+			<xs:element name="steps" type="stepsType"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="string0_3800" use="required"/>
+		<xs:attribute name="outlineIndex" type="xs:long" use="optional"/>
+		<xs:attribute name="status" type="nativeStatusType" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="stepsType">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="step" type="stepType"/>
+		</xs:sequence>
+		<xs:attribute name="iteration" type="string255" use="optional"/>
+	</xs:complexType>
+
+	<xs:complexType name="stepType">
+		<xs:sequence>
+			<xs:element name="error_message" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="input_parameters" type="parametersType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="output_parameters" type="parametersType" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="string3800" use="required"/>
+		<xs:attribute name="duration" type="xs:long" use="required"/>
+		<xs:attribute name="status" type="string255" use="required"/>
+		<xs:attribute name="external_step_id" type="string255" use="optional"/>
+	</xs:complexType>
+
+	<xs:complexType name="parametersType">
+		<xs:sequence minOccurs="1" maxOccurs="unbounded">
+			<xs:element name="parameter" type="parameterType"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="parameterType">
+		<xs:attribute name="name" type="string255" use="required"/>
+		<xs:attribute name="value" type="string0_255" use="optional"/>
+		<xs:attribute name="type" type="string0_255" use="optional"/>
+	</xs:complexType>
+
+	<xs:simpleType name="urlType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([hH][tT]{2}[pP][sS]?://*.*)|([tT][dD][sS]?://*.*)|(testdirector[s]?:*.*)"/>
+			<xs:maxLength value="512"/>
+			<xs:minLength value="6"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2023 Micro Focus or one of its affiliates.
+ * (c) Copyright 2024 Micro Focus or one of its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,10 @@ import OctaneBuildConfig from '../OctaneBuildConfig';
 
 let xmlWithTwoTestSuites: string;
 let xmlWithOneTestSuite: string;
+let xmlFailedAndSkippedTests: string;
 let expectedXmlTwoTestSuites: string;
 let expectedXmlOneTestSuite: string;
+let expectedXmlFailedAndSkippedTests: string;
 const buildConfig: OctaneBuildConfig = {
   build_id: '123',
   job_id: 'myJob',
@@ -39,12 +41,20 @@ beforeAll(() => {
     .readFileSync(TestResources.XML_ONE_TEST_SUITE_PATH)
     .toString();
 
+  xmlFailedAndSkippedTests = fs
+    .readFileSync(TestResources.XML_FAILED_AND_SKIPPED_TESTS_PATH)
+    .toString();
+
   expectedXmlTwoTestSuites = fs
     .readFileSync(TestResources.XML_TWO_TEST_SUITES_EXPECTED_PATH)
     .toString();
 
   expectedXmlOneTestSuite = fs
     .readFileSync(TestResources.XML_ONE_TEST_SUITE_EXPECTED_PATH)
+    .toString();
+
+  expectedXmlFailedAndSkippedTests = fs
+    .readFileSync(TestResources.XML_FAILED_AND_SKIPPED_TESTS_EXPECTED_PATH)
     .toString();
 });
 
@@ -59,5 +69,11 @@ describe('Test results xml should be correctly converted from junit format to AL
     expect(
       formatXml(convertJUnitXMLToOctaneXML(xmlWithOneTestSuite, buildConfig))
     ).toBe(formatXml(expectedXmlOneTestSuite));
+  });
+
+  test('Result with multiple passed tests, one failed and one skipped is correctly converted', () => {
+    expect(
+      formatXml(convertJUnitXMLToOctaneXML(xmlFailedAndSkippedTests, buildConfig))
+    ).toBe(formatXml(expectedXmlFailedAndSkippedTests));
   });
 });

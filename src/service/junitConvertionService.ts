@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2023 Micro Focus or one of its affiliates.
+ * (c) Copyright 2024 Micro Focus or one of its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -208,7 +208,7 @@ const mapFailsToOctaneError = (
  * @returns {TestRunResult} - ALM Octane test run status
  */
 const getTestRunStatus = (testCase: TestCase): TestRunResult => {
-  if (testCase.skipped && (testCase.skipped._text || testCase.skipped._cdata)) {
+  if (testCase.skipped) {
     return TestRunResult.SKIPPED;
   } else if (
     (testCase.error && testCase.error.length > 0) ||

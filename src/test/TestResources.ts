@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2023 Micro Focus or one of its affiliates.
+ * (c) Copyright 2024 Micro Focus or one of its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,10 @@ enum TestResources {
   OCTANE_RESULT_SCHEMA_PATH = 'resources/octaneResultSchema.xsd',
   XML_ONE_TEST_SUITE_PATH = 'resources/oneTestSuiteJUnit.xml',
   XML_TWO_TEST_SUITES_PATH = 'resources/twoTestSuitesJUnit.xml',
+  XML_FAILED_AND_SKIPPED_TESTS_PATH = 'resources/failedAndSkippedTestsJUnit.xml',
   XML_ONE_TEST_SUITE_EXPECTED_PATH = 'resources/oneTestSuiteExpected.xml',
   XML_TWO_TEST_SUITES_EXPECTED_PATH = 'resources/twoTestSuitesExpected.xml',
+  XML_FAILED_AND_SKIPPED_TESTS_EXPECTED_PATH = 'resources/failedAndSkippedTestsExpected.xml',
   ALM_OCTANE_JSON_MODEL_PATH = 'resources/octaneTestResultModel.json',
   OCTANE_MODEL_CONVERTED_EXPECTED_PATH = 'resources/convertedOctaneModelExpected.xml',
   OCTANE_CONFIG_PATH = 'resources/octaneConfig.json'

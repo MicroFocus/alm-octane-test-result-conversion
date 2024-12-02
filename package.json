@@ -1,6 +1,6 @@
 {
   "name": "@microfocus/alm-octane-test-result-convertion",
-  "version": "1.0.1",
+  "version": "25.1.0",
   "description": "A NodeJS library for converting different kinds of test reports into ALM Octane format.",
   "main": "dist/index.js",
   "scripts": {
@@ -22,7 +22,16 @@
     "report",
     "junit"
   ],
-  "author": "Silviu C. Anton",
+  "contributors": [
+    {
+      "name": "Silviu-Constantin Anton",
+      "email": "santon@opentext.com"
+    },
+    {
+      "name": "Ovidiu Stefan Popescu",
+      "email": "opopescu@opentext.com"
+    }
+  ],
   "license": "Apache-2.0",
   "devDependencies": {
     "@microfocus/alm-octane-js-rest-sdk": "^16.1.100-1",
@@ -30,7 +39,7 @@
     "@types/node": "^18.11.18",
     "@types/xml-escape": "^1.1.1",
     "@types/xsd-schema-validator": "^0.5.4",
-    "jest": "^29.5.0",
+    "jest": "^29.7.0",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4",

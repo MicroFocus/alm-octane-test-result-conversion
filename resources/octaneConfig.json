@@ -1,7 +1,7 @@
 {
-  "server": "",
-  "sharedSpace": 0,
-  "workspace": 0,
-  "user": "",
-  "password": ""
+    "server": "https://pmo7.almoctane.com",
+    "sharedSpace": "3001",
+    "workspace": "1002",
+    "user": "TestResultsLibJenkins_kdl8ygg71npv7u348okv9yp4v",
+    "password": "@191119646017652535R"
 }
