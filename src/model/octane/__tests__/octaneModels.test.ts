@@ -33,7 +33,7 @@ beforeAll(() => {
     .toString();
 });
 
-describe('Models should correctly map to the ALM Octane XML format', () => {
+describe('Models should correctly map to the OpenText SDP / SDM XML format', () => {
   test('TestResults should map to the correct XML format', () => {
     const xml = convert.js2xml(testResult, { compact: true });
     expect(formatXml(xml)).toBe(formatXml(expectedXml));

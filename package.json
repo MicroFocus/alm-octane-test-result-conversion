@@ -1,7 +1,7 @@
 {
   "name": "@microfocus/alm-octane-test-result-convertion",
-  "version": "25.1.0",
-  "description": "A NodeJS library for converting different kinds of test reports into ALM Octane format.",
+  "version": "25.1.1",
+  "description": "A NodeJS library for converting different kinds of test reports into OpenText SDP / SDM format.",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",

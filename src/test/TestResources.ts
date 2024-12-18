@@ -24,6 +24,8 @@ enum TestResources {
   XML_FAILED_AND_SKIPPED_TESTS_EXPECTED_PATH = 'resources/failedAndSkippedTestsExpected.xml',
   ALM_OCTANE_JSON_MODEL_PATH = 'resources/octaneTestResultModel.json',
   OCTANE_MODEL_CONVERTED_EXPECTED_PATH = 'resources/convertedOctaneModelExpected.xml',
+  GHERKIN_TWO_FEATURES_PATH = 'resources/gherkinTwoFeatures.xml',
+  GHERKIN_TWO_FEATURES_EXPECTED_PATH = 'resources/gherkinTwoFeaturesExpected.xml',
   OCTANE_CONFIG_PATH = 'resources/octaneConfig.json'
 }
 

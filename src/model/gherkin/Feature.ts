@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-import BuildContext from './BuildContext';
-import GherkinTestRuns from './GherkinTestRuns';
-import TestFields from './TestFields';
-import TestRuns from './TestRuns';
+import FeatureAttributes from './FeatureAttributes';
+import Scenario from './Scenario';
+import Scenarios from './Scenarios';
+import ScriptFile from './ScriptFile';
 
-export default interface TestsResult {
-  test_result: {
-    build: BuildContext;
-    test_fields: TestFields;
-    test_runs: TestRuns | GherkinTestRuns;
-  };
+export default interface Feature {
+  _attributes: FeatureAttributes;
+  file: ScriptFile;
+  scenarios: Scenarios;
 }

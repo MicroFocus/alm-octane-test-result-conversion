@@ -27,10 +27,10 @@ import TestsResult from '../model/octane/TestsResult';
 import OctaneBuildConfig from './OctaneBuildConfig';
 
 /**
- * Convert JUnit format XML to ALM Octane format XML
+ * Convert JUnit format XML to OpenText SDP / SDM format XML
  * @param {string} junitXML - string containing JUnit format XML
- * @param {OctaneBuildConfig} octaneBuildConfig - ALM Octane build configuration data (eg.: job id, buiild id, server id etc.)
- * @returns {string} - string containing converted XML (returns the ALM Octane format XML)
+ * @param {OctaneBuildConfig} octaneBuildConfig - OpenText SDP / SDM build configuration data (eg.: job id, buiild id, server id etc.)
+ * @returns {string} - string containing converted XML (returns the OpenText SDP / SDM format XML)
  */
 const convertJUnitXMLToOctaneXML = (
   junitXML: string,
@@ -45,10 +45,10 @@ const convertJUnitXMLToOctaneXML = (
 };
 
 /**
- * Creates ALM Octane test results object from JUnit XML root object
+ * Creates OpenText SDP / SDM test results object from JUnit XML root object
  * @param {MultipleSuitesRoot | SingleSuiteRoot} junitReport - JUnit XML root object
- * @param {OctaneBuildConfig} buildConfig - ALM Octane build configuration data (eg.: job id, buiild id, server id etc.)
- * @returns {TestsResult} - ALM Octane tests result object to be converted to XML
+ * @param {OctaneBuildConfig} buildConfig - OpenText SDP / SDM build configuration data (eg.: job id, buiild id, server id etc.)
+ * @returns {TestsResult} - OpenText SDP / SDM tests result object to be converted to XML
  */
 const createOctaneTestsResult = (
   junitReport: MultipleSuitesRoot | SingleSuiteRoot,
@@ -91,9 +91,9 @@ const createOctaneTestsResult = (
 };
 
 /**
- * Converts JUnit XML root object to a list of ALM Octane Test Run objects
+ * Converts JUnit XML root object to a list of OpenText SDP / SDM Test Run objects
  * @param {MultipleSuitesRoot | SingleSuiteRoot} reportRoot - JUnit XML root object
- * @returns {TestRun[]} - list of Test Run ALM Octane objects
+ * @returns {TestRun[]} - list of Test Run OpenText SDP / SDM objects
  */
 const convertJUnitSuiteToOctaneRuns = (
   reportRoot: MultipleSuitesRoot | SingleSuiteRoot
@@ -127,10 +127,10 @@ const convertJUnitSuiteToOctaneRuns = (
 };
 
 /**
- * Maps a JUnit TestCase object to an ALM Octane TestRun object
+ * Maps a JUnit TestCase object to an OpenText SDP / SDM TestRun object
  * @param {TestCase} testCase - JUnit TestCase object
  * @param {string} pkg - package of the test class
- * @returns {TestRun} - resulted ALM Octane TestRun object
+ * @returns {TestRun} - resulted OpenText SDP / SDM TestRun object
  */
 const mapTestCaseToOctaneRun = (testCase: TestCase, pkg?: string): TestRun => {
   const error: TestRunError | undefined = mapFailsToOctaneError(testCase);
@@ -157,9 +157,9 @@ const mapTestCaseToOctaneRun = (testCase: TestCase, pkg?: string): TestRun => {
 };
 
 /**
- * Maps errors and failured from JUnit TestCase object to ALM Octane TestRunError object
+ * Maps errors and failured from JUnit TestCase object to OpenText SDP / SDM TestRunError object
  * @param {TestCase} testCase - JUnit TestCase object to extract the errors and failures from
- * @returns {TestRunError | undefined} - resulted ALM Octane TestRunError object if any errors exist, else undefined
+ * @returns {TestRunError | undefined} - resulted OpenText SDP / SDM TestRunError object if any errors exist, else undefined
  */
 const mapFailsToOctaneError = (
   testCase: TestCase
@@ -203,9 +203,9 @@ const mapFailsToOctaneError = (
 };
 
 /**
- * Generates ALM Octane TestRunResult based on the JUnit TestCase object (run status)
+ * Generates OpenText SDP / SDM TestRunResult based on the JUnit TestCase object (run status)
  * @param {TestCase} testCase - JUnit TestCase object
- * @returns {TestRunResult} - ALM Octane test run status
+ * @returns {TestRunResult} - OpenText SDP / SDM test run status
  */
 const getTestRunStatus = (testCase: TestCase): TestRunResult => {
   if (testCase.skipped) {

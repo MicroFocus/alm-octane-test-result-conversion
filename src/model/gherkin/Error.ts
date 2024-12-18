@@ -14,15 +14,6 @@
  * limitations under the License.
  */
 
-import BuildContext from './BuildContext';
-import GherkinTestRuns from './GherkinTestRuns';
-import TestFields from './TestFields';
-import TestRuns from './TestRuns';
-
-export default interface TestsResult {
-  test_result: {
-    build: BuildContext;
-    test_fields: TestFields;
-    test_runs: TestRuns | GherkinTestRuns;
-  };
+export default interface Error {
+    _cdata: string;
 }

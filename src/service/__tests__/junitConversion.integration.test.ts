@@ -60,8 +60,8 @@ beforeAll(async () => {
     .toString();
 });
 
-describe('Converted test results should respect the ALM Octane xsd schema', () => {
-  test('Result with multiple test suites respects ALM Octane xsd schema', async () => {
+describe('Converted test results should respect the OpenText SDP / SDM xsd schema', () => {
+  test('Result with multiple test suites respects OpenText SDP / SDM xsd schema', async () => {
     const { err, result } = await validateXMLWithFile(
       convertJUnitXMLToOctaneXML(xmlWithTwoTestSuites, buildConfig),
       TestResources.OCTANE_RESULT_SCHEMA_PATH
@@ -72,7 +72,7 @@ describe('Converted test results should respect the ALM Octane xsd schema', () =
     expect(result.valid).toBe(true);
   });
 
-  test('Result with single test suite respects ALM Octane xsd schema', async () => {
+  test('Result with single test suite respects OpenText SDP / SDM xsd schema', async () => {
     const { err, result } = await validateXMLWithFile(
       convertJUnitXMLToOctaneXML(xmlWithOneTestSuite, buildConfig),
       TestResources.OCTANE_RESULT_SCHEMA_PATH

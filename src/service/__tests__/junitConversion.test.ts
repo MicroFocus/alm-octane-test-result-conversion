@@ -58,7 +58,7 @@ beforeAll(() => {
     .toString();
 });
 
-describe('Test results xml should be correctly converted from junit format to ALM Octane Format', () => {
+describe('Test results xml should be correctly converted from junit format to OpenText SDP / SDM Format', () => {
   test('Result with multiple test suites is correctly converted', () => {
     expect(
       formatXml(convertJUnitXMLToOctaneXML(xmlWithTwoTestSuites, buildConfig))
