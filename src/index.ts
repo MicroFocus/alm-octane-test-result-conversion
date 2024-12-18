@@ -15,5 +15,6 @@
  */
 
 import convertJUnitXMLToOctaneXML from './service/junitConvertionService';
+import convertGherkinXMLToOctaneXML from './service/gherkinConvertionService';
 
-export { convertJUnitXMLToOctaneXML };
+export { convertJUnitXMLToOctaneXML, convertGherkinXMLToOctaneXML };

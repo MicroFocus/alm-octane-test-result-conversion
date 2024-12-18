@@ -85,7 +85,7 @@ const convertedXML = convertGherkinXMLToOctaneXML(xml, buildConfig, 'Cucumber');
 
 ## 5. Change log
 
-### 25.1.1
+### 25.1.2
 - Convert Gherkin test results to **the product's** format XML via the `convertGherkinXMLToOctaneXML` method.
 
 ### 25.1.0
