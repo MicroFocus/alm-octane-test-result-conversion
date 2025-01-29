@@ -23,9 +23,12 @@ import OctaneBuildConfig from '../OctaneBuildConfig';
 let xmlWithTwoTestSuites: string;
 let xmlWithOneTestSuite: string;
 let xmlFailedAndSkippedTests: string;
+let xmlAllBuildContextFields: string;
 let expectedXmlTwoTestSuites: string;
 let expectedXmlOneTestSuite: string;
 let expectedXmlFailedAndSkippedTests: string;
+let expectedXmlAllBuildContextFields: string;
+
 const buildConfig: OctaneBuildConfig = {
   build_id: '123',
   job_id: 'myJob',
@@ -45,6 +48,10 @@ beforeAll(() => {
     .readFileSync(TestResources.XML_FAILED_AND_SKIPPED_TESTS_PATH)
     .toString();
 
+  xmlAllBuildContextFields = fs
+    .readFileSync(TestResources.XML_ALL_BUILD_CONTEXT_FIELDS_PATH)
+    .toString();
+
   expectedXmlTwoTestSuites = fs
     .readFileSync(TestResources.XML_TWO_TEST_SUITES_EXPECTED_PATH)
     .toString();
@@ -55,6 +62,10 @@ beforeAll(() => {
 
   expectedXmlFailedAndSkippedTests = fs
     .readFileSync(TestResources.XML_FAILED_AND_SKIPPED_TESTS_EXPECTED_PATH)
+    .toString();
+
+  expectedXmlAllBuildContextFields = fs
+    .readFileSync(TestResources.XML_ALL_BUILD_CONTEXT_FIELDS_EXPECTED_PATH)
     .toString();
 });
 
@@ -75,5 +86,21 @@ describe('Test results xml should be correctly converted from junit format to Op
     expect(
       formatXml(convertJUnitXMLToOctaneXML(xmlFailedAndSkippedTests, buildConfig))
     ).toBe(formatXml(expectedXmlFailedAndSkippedTests));
+  });
+
+  test('Result with all build context fields is correctly converted', () => {
+    const fullBuildConfig: OctaneBuildConfig = {
+      server_id: '1001',
+      job_id: '3001',
+      job_name: 'Run Tests',
+      build_id: '2001',
+      build_name: 'Production Build',
+      sub_type: 'subtype1',
+      artifact_id: '4001'
+    };
+
+    expect(
+      formatXml(convertJUnitXMLToOctaneXML(xmlAllBuildContextFields, fullBuildConfig))
+    ).toBe(formatXml(expectedXmlAllBuildContextFields));
   });
 });

@@ -1,0 +1,19 @@
+<test_result>
+  <build server_id="1001" job_id="3001" job_name="Run Tests" build_id="2001" build_name="Production Build" sub_type="subtype1" artifact_id="4001"/>
+  <test_fields>
+    <test_field type="Test_Level" value="Unit Test" />
+    <test_field type="Test_Type" value="Sanity" />
+    <test_field type="Framework" value="JUnit" />
+  </test_fields>
+  <test_runs>
+    <test_run module="" class="com.howtodoinjava.junit5.examples.xmlReport.HelloTest" name="testOne"
+      status="Passed" duration="0" />
+    <test_run module="" class="com.howtodoinjava.junit5.examples.xmlReport.HelloTest" name="testTwo"
+      status="Failed" duration="0">
+      <error message="expected: &lt;true&gt; but was: &lt;false&gt;"
+        type="org.opentest4j.AssertionFailedError">
+        org.opentest4j.AssertionFailedError: expected: &lt;true&gt;but was: &lt;false&gt;at 
+        org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)...</error>
+    </test_run>
+  </test_runs>
+</test_result>

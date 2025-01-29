@@ -21,4 +21,5 @@ export default interface OctaneBuildConfig {
   build_id: string;
   build_name?: string;
   sub_type?: string;
+  artifact_id?: string;
 }
