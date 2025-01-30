@@ -85,8 +85,11 @@ const convertedXML = convertGherkinXMLToOctaneXML(xml, buildConfig, 'Cucumber');
 
 ## 5. Change log
 
+### 25.2.1
+- Add `external_run_id` to test run's properties.
+
 ### 25.2.0
-- Add `Artifact ID` as a build property into the `OctaneBuildConfig` interface.
+- Add `artifact_id` as a build property into the `OctaneBuildConfig` interface.
 
 ### 25.1.2
 - Convert Gherkin test results to **the product's** format XML via the `convertGherkinXMLToOctaneXML` method.

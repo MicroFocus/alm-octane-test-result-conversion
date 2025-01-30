@@ -54,11 +54,12 @@ const createOctaneTestsResult = (
   junitReport: MultipleSuitesRoot | SingleSuiteRoot,
   buildConfig: OctaneBuildConfig
 ): TestsResult => {
+  const { external_run_id, ...buildContext } = buildConfig;
   return {
     test_result: {
       build: {
         _attributes: {
-          ...buildConfig
+          ...buildContext
         }
       },
       test_fields: {
@@ -84,7 +85,7 @@ const createOctaneTestsResult = (
         ]
       },
       test_runs: {
-        test_run: convertJUnitSuiteToOctaneRuns(junitReport)
+        test_run: convertJUnitSuiteToOctaneRuns(junitReport, external_run_id)
       }
     }
   };
@@ -93,10 +94,12 @@ const createOctaneTestsResult = (
 /**
  * Converts JUnit XML root object to a list of OpenText SDP / SDM Test Run objects
  * @param {MultipleSuitesRoot | SingleSuiteRoot} reportRoot - JUnit XML root object
+ * @param {string} externalRunId - external run id (on CI server)
  * @returns {TestRun[]} - list of Test Run OpenText SDP / SDM objects
  */
 const convertJUnitSuiteToOctaneRuns = (
-  reportRoot: MultipleSuitesRoot | SingleSuiteRoot
+  reportRoot: MultipleSuitesRoot | SingleSuiteRoot,
+  externalRunId?: string
 ): TestRun[] => {
   const octaneTestRuns: TestRun[] = [];
   if (isMultipleSuitesRoot(reportRoot)) {
@@ -118,7 +121,7 @@ const convertJUnitSuiteToOctaneRuns = (
 
     testSuite.testcase.forEach(testCase => {
       octaneTestRuns.push(
-        mapTestCaseToOctaneRun(testCase, testSuite._attributes.package)
+        mapTestCaseToOctaneRun(testCase, testSuite._attributes.package, externalRunId)
       );
     });
   }
@@ -130,9 +133,14 @@ const convertJUnitSuiteToOctaneRuns = (
  * Maps a JUnit TestCase object to an OpenText SDP / SDM TestRun object
  * @param {TestCase} testCase - JUnit TestCase object
  * @param {string} pkg - package of the test class
+ * @param {string} externalRunId - external run id (on CI server)
  * @returns {TestRun} - resulted OpenText SDP / SDM TestRun object
  */
-const mapTestCaseToOctaneRun = (testCase: TestCase, pkg?: string): TestRun => {
+const mapTestCaseToOctaneRun = (
+  testCase: TestCase,
+  pkg?: string,
+  externalRunId?: string
+): TestRun => {
   const error: TestRunError | undefined = mapFailsToOctaneError(testCase);
   const testRun: TestRun = {
     _attributes: {
@@ -145,7 +153,8 @@ const mapTestCaseToOctaneRun = (testCase: TestCase, pkg?: string): TestRun => {
       status: getTestRunStatus(testCase),
       duration: testCase._attributes.time
         ? Math.round(Number.parseFloat(testCase._attributes.time))
-        : 1
+        : 1,
+      external_run_id: externalRunId
     }
   };
 

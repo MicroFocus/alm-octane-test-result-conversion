@@ -7,9 +7,9 @@
   </test_fields>
   <test_runs>
     <test_run module="" class="com.howtodoinjava.junit5.examples.xmlReport.HelloTest" name="testOne"
-      status="Passed" duration="0" />
+      status="Passed" duration="0" external_run_id="12000" />
     <test_run module="" class="com.howtodoinjava.junit5.examples.xmlReport.HelloTest" name="testTwo"
-      status="Failed" duration="0">
+      status="Failed" duration="0" external_run_id="12000">
       <error message="expected: &lt;true&gt; but was: &lt;false&gt;"
         type="org.opentest4j.AssertionFailedError">
         org.opentest4j.AssertionFailedError: expected: &lt;true&gt;but was: &lt;false&gt;at 

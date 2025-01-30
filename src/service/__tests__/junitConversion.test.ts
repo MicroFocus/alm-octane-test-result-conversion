@@ -96,7 +96,8 @@ describe('Test results xml should be correctly converted from junit format to Op
       build_id: '2001',
       build_name: 'Production Build',
       sub_type: 'subtype1',
-      artifact_id: '4001'
+      artifact_id: '4001',
+      external_run_id: "12000"
     };
 
     expect(
