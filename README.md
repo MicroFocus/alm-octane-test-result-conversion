@@ -85,6 +85,9 @@ const convertedXML = convertGherkinXMLToOctaneXML(xml, buildConfig, 'Cucumber');
 
 ## 5. Change log
 
+### 25.2.2
+- Add `external_run_id` to test run's properties for test results with multiple test suites.
+
 ### 25.2.1
 - Add `external_run_id` to test run's properties.
 

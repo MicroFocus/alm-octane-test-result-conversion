@@ -111,7 +111,7 @@ const convertJUnitSuiteToOctaneRuns = (
 
       testSuite.testcase.forEach(testCase => {
         octaneTestRuns.push(
-          mapTestCaseToOctaneRun(testCase, testSuite._attributes.package)
+          mapTestCaseToOctaneRun(testCase, testSuite._attributes.package, externalRunId)
         );
       });
     });
