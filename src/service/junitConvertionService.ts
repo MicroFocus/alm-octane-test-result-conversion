@@ -1,12 +1,25 @@
 /*
- * (c) Copyright 2024 Micro Focus or one of its affiliates.
+ * Copyright 2024-2025 Open Text.
+ *
+ * The only warranties for products and services of Open Text and
+ * its affiliates and licensors (“Open Text”) are as may be set forth
+ * in the express warranty statements accompanying such products and services.
+ * Nothing herein should be construed as constituting an additional warranty.
+ * Open Text shall not be liable for technical or editorial errors or
+ * omissions contained herein. The information contained herein is subject
+ * to change without notice.
+ *
+ * Except as specifically indicated otherwise, this document contains
+ * confidential information and a valid license is required for possession,
+ * use or copying. If this work is provided to the U.S. Government,
+ * consistent with FAR 12.211 and 12.212, Commercial Computer Software,
+ * Computer Software Documentation, and Technical Data for Commercial Items are
+ * licensed to the U.S. Government under vendor's standard commercial license.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ *   http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,21 +38,26 @@ import { TestRun, TestRunResult } from '../model/octane/TestRun';
 import TestRunError from '../model/octane/TestRunError';
 import TestsResult from '../model/octane/TestsResult';
 import OctaneBuildConfig from './OctaneBuildConfig';
+import TestSuite from '../model/junit/TestSuite';
+import { FrameworkType } from '../model/common/FrameworkType';
 
 /**
  * Convert JUnit format XML to OpenText SDP / SDM format XML
  * @param {string} junitXML - string containing JUnit format XML
  * @param {OctaneBuildConfig} octaneBuildConfig - OpenText SDP / SDM build configuration data (eg.: job id, buiild id, server id etc.)
+ * @param {FrameworkType} framework - Testing framework used to run the automated tests
  * @returns {string} - string containing converted XML (returns the OpenText SDP / SDM format XML)
  */
 const convertJUnitXMLToOctaneXML = (
   junitXML: string,
-  octaneBuildConfig: OctaneBuildConfig
+  octaneBuildConfig: OctaneBuildConfig,
+  framework?: FrameworkType
 ): string => {
   const junitReportJSON = xml2js(junitXML, { compact: true });
   const octaneReportJSON = createOctaneTestsResult(
     <MultipleSuitesRoot | SingleSuiteRoot>junitReportJSON,
-    octaneBuildConfig
+    octaneBuildConfig,
+    framework
   );
   return js2xml(octaneReportJSON, { compact: true });
 };
@@ -48,11 +66,13 @@ const convertJUnitXMLToOctaneXML = (
  * Creates OpenText SDP / SDM test results object from JUnit XML root object
  * @param {MultipleSuitesRoot | SingleSuiteRoot} junitReport - JUnit XML root object
  * @param {OctaneBuildConfig} buildConfig - OpenText SDP / SDM build configuration data (eg.: job id, buiild id, server id etc.)
+ * @param {FrameworkType} framework - Testing framework used to run the automated tests
  * @returns {TestsResult} - OpenText SDP / SDM tests result object to be converted to XML
  */
 const createOctaneTestsResult = (
   junitReport: MultipleSuitesRoot | SingleSuiteRoot,
-  buildConfig: OctaneBuildConfig
+  buildConfig: OctaneBuildConfig,
+  framework?: FrameworkType
 ): TestsResult => {
   const { external_run_id, ...buildContext } = buildConfig;
   return {
@@ -79,13 +99,13 @@ const createOctaneTestsResult = (
           {
             _attributes: {
               type: 'Framework',
-              value: 'JUnit'
+              value: framework || 'JUnit'
             }
           }
         ]
       },
       test_runs: {
-        test_run: convertJUnitSuiteToOctaneRuns(junitReport, external_run_id)
+        test_run: convertJUnitSuiteToOctaneRuns(junitReport, external_run_id, framework)
       }
     }
   };
@@ -95,38 +115,66 @@ const createOctaneTestsResult = (
  * Converts JUnit XML root object to a list of OpenText SDP / SDM Test Run objects
  * @param {MultipleSuitesRoot | SingleSuiteRoot} reportRoot - JUnit XML root object
  * @param {string} externalRunId - external run id (on CI server)
+ * @param {FrameworkType} framework - Testing framework used to run the automated tests
  * @returns {TestRun[]} - list of Test Run OpenText SDP / SDM objects
  */
 const convertJUnitSuiteToOctaneRuns = (
   reportRoot: MultipleSuitesRoot | SingleSuiteRoot,
-  externalRunId?: string
+  externalRunId?: string,
+  framework?: FrameworkType
 ): TestRun[] => {
   const octaneTestRuns: TestRun[] = [];
+  const concatenateSuiteName = framework == FrameworkType.RobotFramework;
   if (isMultipleSuitesRoot(reportRoot)) {
     let testSuites = (<MultipleSuitesRoot>reportRoot).testsuites.testsuite;
     testSuites = convertToArray(testSuites);
 
     testSuites.forEach(testSuite => {
-      testSuite.testcase = convertToArray(testSuite.testcase);
-
-      testSuite.testcase.forEach(testCase => {
-        octaneTestRuns.push(
-          mapTestCaseToOctaneRun(testCase, testSuite._attributes.package, externalRunId)
-        );
-      });
+      processTestSuite(testSuite, '', externalRunId, octaneTestRuns, concatenateSuiteName);
     });
   } else {
     const testSuite = (<SingleSuiteRoot>reportRoot).testsuite;
+    processTestSuite(testSuite, '', externalRunId, octaneTestRuns, concatenateSuiteName);
+  }
+
+  return octaneTestRuns;
+};
+
+/**
+ * Processes a test suite, including nested suites, and maps test cases to OpenText SDP / SDM TestRun objects
+ * @param {TestSuite} testSuite - JUnit TestSuite object
+ * @param {string} parentPackage - concatenated package name of parent suites
+ * @param {string} externalRunId - external run id (on CI server)
+ * @param {TestRun[]} octaneTestRuns - list of Test Run OpenText SDP / SDM objects
+ * @param {string} concatenateSuiteName - should the package name be concatenated with the parent suite name
+ */
+const processTestSuite = (
+  testSuite: TestSuite,
+  parentPackage: string,
+  externalRunId: string | undefined,
+  octaneTestRuns: TestRun[],
+  concatenateSuiteName: boolean
+): void => {
+  const currentPackage = concatenateSuiteName ? (parentPackage
+    ? `${parentPackage}.${testSuite._attributes.name}`
+    : testSuite._attributes.name) : '';
+
+  if (testSuite.testcase) {
     testSuite.testcase = convertToArray(testSuite.testcase);
 
     testSuite.testcase.forEach(testCase => {
       octaneTestRuns.push(
-        mapTestCaseToOctaneRun(testCase, testSuite._attributes.package, externalRunId)
+        mapTestCaseToOctaneRun(testCase, currentPackage, externalRunId)
       );
     });
   }
 
-  return octaneTestRuns;
+  if (testSuite.testsuite) {
+    const nestedSuites = convertToArray(testSuite.testsuite);
+    nestedSuites.forEach(nestedSuite => {
+      processTestSuite(nestedSuite, currentPackage, externalRunId, octaneTestRuns, concatenateSuiteName);
+    });
+  }
 };
 
 /**
@@ -174,7 +222,6 @@ const mapFailsToOctaneError = (
   testCase: TestCase
 ): TestRunError | undefined => {
   let error: Error | Failure;
-
   if (testCase.error) {
     testCase.error = convertToArray(testCase.error);
     if (testCase.error.length > 0) {

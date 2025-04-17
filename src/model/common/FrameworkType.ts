@@ -27,17 +27,29 @@
  * limitations under the License.
  */
 
-export default interface Property {
-  _attributes: {
-    name: string;
-    value?: string;
-  };
-  _cdata?: string;
-  item?: {
-    _attributes: {
-      name: string;
-    };
-    _cdata?: string;
-    _text?: string;
-  }[];
+export enum FrameworkType {
+    BDDScenario = "Cucumber BDD Scenario",
+    Cucumber = "Cucumber",
+    JBehave = "JBehave",
+    JUnit = "JUnit",
+    OTFunctionalTesting = "Functional Testing",
+    Protractor = "Protractor",
+    RobotFramework = "RobotFramework",
+    Selenium = "Selenium"
+}
+
+const frameworkTypeMappings: { [key: string]: FrameworkType } = {
+    "bddscenario": FrameworkType.BDDScenario,
+    "cucumber": FrameworkType.Cucumber,
+    "jbehave": FrameworkType.JBehave,
+    "junit": FrameworkType.JUnit,
+    "robotframework": FrameworkType.RobotFramework,
+    "protractor": FrameworkType.Protractor,
+    "selenium": FrameworkType.Selenium,
+    "testng": FrameworkType.Selenium,
+    "uft": FrameworkType.OTFunctionalTesting
+};
+
+export function stringToFrameworkType(value: string): FrameworkType | undefined {
+    return frameworkTypeMappings[value.toLowerCase()];
 }

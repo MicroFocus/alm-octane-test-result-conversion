@@ -1,12 +1,25 @@
 /*
- * (c) Copyright 2024 Micro Focus or one of its affiliates.
+ * Copyright 2024-2025 Open Text.
+ *
+ * The only warranties for products and services of Open Text and
+ * its affiliates and licensors (“Open Text”) are as may be set forth
+ * in the express warranty statements accompanying such products and services.
+ * Nothing herein should be construed as constituting an additional warranty.
+ * Open Text shall not be liable for technical or editorial errors or
+ * omissions contained herein. The information contained herein is subject
+ * to change without notice.
+ *
+ * Except as specifically indicated otherwise, this document contains
+ * confidential information and a valid license is required for possession,
+ * use or copying. If this work is provided to the U.S. Government,
+ * consistent with FAR 12.211 and 12.212, Commercial Computer Software,
+ * Computer Software Documentation, and Technical Data for Commercial Items are
+ * licensed to the U.S. Government under vendor's standard commercial license.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ *   http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +35,7 @@ import OctaneBuildConfig from './OctaneBuildConfig';
 import MultipleFeaturesRoot from '../model/gherkin/MultipleFeaturesRoot';
 import Feature from '../model/gherkin/Feature';
 import GherkinTestRun from '../model/octane/GherkinTestRun';
+import { FrameworkType } from '../model/common/FrameworkType';
 
 const FAILED_STATUS_LOWER_CASE: string = TestRunResult.FAILED.toLowerCase();
 
@@ -29,13 +43,13 @@ const FAILED_STATUS_LOWER_CASE: string = TestRunResult.FAILED.toLowerCase();
  * Convert Gherkin format XML to OpenText SDP / SDM format XML
  * @param {string} gherkinXML - string containing Gherkin format XML
  * @param {OctaneBuildConfig} octaneBuildConfig - OpenText SDP / SDM build configuration data (eg.: job id, buiild id, server id etc.)
- * @param {string} framework - Testing framework used to run the automated tests
+ * @param {FrameworkType} framework - Testing framework used to run the automated tests
  * @returns {string} - string containing converted XML (returns the OpenText SDP / SDM format XML)
  */
 const convertGherkinXMLToOctaneXML = (
   gherkinXML: string,
   octaneBuildConfig: OctaneBuildConfig,
-  framework: string
+  framework: FrameworkType
 ): string => {
   const gherkinReportJSON = xml2js(gherkinXML, { compact: true });
   const octaneReportJSON = createOctaneTestsResult(
@@ -50,13 +64,13 @@ const convertGherkinXMLToOctaneXML = (
  * Creates OpenText SDP / SDM test results object from Gherkin XML root object
  * @param {MultipleFeaturesRoot} gherkinReport - Gherkin XML root object
  * @param {OctaneBuildConfig} buildConfig - OpenText SDP / SDM build configuration data (eg.: job id, build id, server id etc.)
- * @param {string} framework - Testing framework used to run the automated tests
+ * @param {FrameworkType} framework - Testing framework used to run the automated tests
  * @returns {TestsResult} - OpenText SDP / SDM tests result object to be converted to XML
  */
 const createOctaneTestsResult = (
   gherkinReport: MultipleFeaturesRoot,
   buildConfig: OctaneBuildConfig,
-  framework: string
+  framework: FrameworkType
 ): TestsResult => {
   return {
     test_result: {

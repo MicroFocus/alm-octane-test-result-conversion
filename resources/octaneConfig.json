@@ -1,7 +1,7 @@
 {
-  "server": "",
-  "sharedSpace": 0,
-  "workspace": 0,
-  "user": "",
-  "password": ""
+    "server": "https://laura-1.almoctane.com/",
+    "sharedSpace": "1001",
+    "workspace": "1002",
+    "user": "GitHub_g1x4wdm7gpoqzhv6l8xn0wpoz",
+    "password": "1zPm3FYThdOjOlmG1eQ"
 }

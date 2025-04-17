@@ -62,7 +62,7 @@ const xml = fs
   .readFileSync(TestResources.XML_ONE_TEST_SUITE_PATH)
   .toString();
 
-const convertedXML = convertJUnitXMLToOctaneXML(xml, buildConfig);
+const convertedXML = convertJUnitXMLToOctaneXML(xml, buildConfig, FrameworkType.JUnit);
 ```
 
 #### 4.2.2. Convert Gherkin results
@@ -80,10 +80,13 @@ const xml = fs
   .readFileSync(TestResources.GHERKIN_TWO_FEATURES_PATH)
   .toString();
 
-const convertedXML = convertGherkinXMLToOctaneXML(xml, buildConfig, 'Cucumber');
+const convertedXML = convertGherkinXMLToOctaneXML(xml, buildConfig, FrameworkType.Cucumber);
 ```
 
 ## 5. Change log
+
+### 25.2.3
+- Convert RobotFramework test results to **the product's** format XML via the `convertJUnitXMLToOctaneXML` method.
 
 ### 25.2.2
 - Add `external_run_id` to test run's properties for test results with multiple test suites.

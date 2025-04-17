@@ -30,12 +30,15 @@
 import * as fs from 'node:fs';
 import formatXml from 'xml-formatter';
 import TestResources from '../../test/TestResources';
-import convertGherkinXMLToOctaneXML from '../gherkinConvertionService';
+import convertJUnitXMLToOctaneXML from '../junitConvertionService';
 import OctaneBuildConfig from '../OctaneBuildConfig';
 import { FrameworkType } from '../../model/common/FrameworkType';
 
-let gherkinWithTwoFeatures: string;
-let expectedGherkinTwoFeatures: string;
+let nestedTestSuitesXUnit: string;
+let nestedTestSuitesXUnitExpected: string;
+let singleTestSuiteXUnit: string;
+let singleTestSuiteXUnitExpected: string;
+
 const buildConfig: OctaneBuildConfig = {
   build_id: '123',
   job_id: 'myJob',
@@ -43,19 +46,33 @@ const buildConfig: OctaneBuildConfig = {
 };
 
 beforeAll(() => {
-  gherkinWithTwoFeatures = fs
-    .readFileSync(TestResources.GHERKIN_TWO_FEATURES_PATH)
+  nestedTestSuitesXUnit = fs
+    .readFileSync(TestResources.XUNIT_NESTED_TEST_SUITES_PATH)
     .toString();
 
-  expectedGherkinTwoFeatures = fs
-    .readFileSync(TestResources.GHERKIN_TWO_FEATURES_EXPECTED_PATH)
+  nestedTestSuitesXUnitExpected = fs
+    .readFileSync(TestResources.XUNIT_NESTED_TEST_SUITES_EXPECTED_PATH)
+    .toString();
+  
+  singleTestSuiteXUnit = fs
+    .readFileSync(TestResources.XUNIT_SINGLE_TEST_SUITE_PATH)
+    .toString();
+
+  singleTestSuiteXUnitExpected = fs
+    .readFileSync(TestResources.XUNIT_SINGLE_TEST_SUITE_EXPECTED_PATH)
     .toString();
 });
 
-describe('Gherkin test results should be correctly converted from Gherkin format to OpenText SDP / SDM Format', () => {
-  test('Result with multiple features is correctly converted', () => {
+describe('Test result XMLs should be correctly converted from XUnit format to OpenText SDP / SDM Format', () => {
+  test('XUnit - Multiple nested test suites', () => {
     expect(
-      formatXml(convertGherkinXMLToOctaneXML(gherkinWithTwoFeatures, buildConfig, FrameworkType.Cucumber))
-    ).toBe(formatXml(expectedGherkinTwoFeatures));
+      formatXml(convertJUnitXMLToOctaneXML(nestedTestSuitesXUnit, buildConfig, FrameworkType.RobotFramework))
+    ).toBe(formatXml(nestedTestSuitesXUnitExpected));
+  });
+
+  test('XUnit - Single test suite', () => {
+    expect(
+      formatXml(convertJUnitXMLToOctaneXML(singleTestSuiteXUnit, buildConfig, FrameworkType.RobotFramework))
+    ).toBe(formatXml(singleTestSuiteXUnitExpected));
   });
 });

@@ -30,6 +30,7 @@
 		<xs:attribute name="build_id" type="string255" use="required"/>
 		<xs:attribute name="build_name" type="string255" use="optional"/>
 		<xs:attribute name="sub_type" type="string0_255" use="optional"/>
+		<xs:attribute name="artifact_id" type="string0_255" use="optional"/>
 	</xs:complexType>
 
 	<xs:complexType name="releaseType">
@@ -164,6 +165,7 @@
 		<xs:attribute name="manual" type="xs:boolean" default="false"/>
 		<xs:attribute name="started" type="xs:long" use="optional"/>
 		<xs:attribute name="external_report_url" type="urlType" use="optional"/>
+		<xs:attribute name="external_assets" type="xs:string" use="optional"/>
 		<xs:attribute name="external_test_id" type="string0_255" use="optional"/>
 		<xs:attribute name="external_run_id" type="string0_255" use="optional"/>
 		<xs:attribute name="run_type" type="string0_255" use="optional"/>

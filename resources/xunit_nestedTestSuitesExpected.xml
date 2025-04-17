@@ -1,0 +1,91 @@
+<test_result>
+    <build build_id="123" job_id="myJob" server_id="serverId" />
+    <test_fields>
+        <test_field type="Test_Level" value="Unit Test" />
+        <test_field type="Test_Type" value="Sanity" />
+        <test_field type="Framework" value="RobotFramework" />
+    </test_fields>
+    <test_runs>
+        <test_run module="" package="Tests.Nested Suite.SuiteC" class="Tests.Nested Suite.SuiteC"
+            name="Test Case 1" status="Passed" duration="3" />
+        <test_run module="" package="Tests.Nested Suite.SuiteC" class="Tests.Nested Suite.SuiteC"
+            name="Test Case 2" status="Passed" duration="3" />
+        <test_run module="" package="Tests.Nested Suite.SuiteC" class="Tests.Nested Suite.SuiteC"
+            name="Test Case 3" status="Passed" duration="3" />
+        <test_run module="" package="Tests.Nested Suite.Twice Nested Suite.SuiteD"
+            class="Tests.Nested Suite.Twice Nested Suite.SuiteD" name="Test Case 1" status="Passed"
+            duration="3" />
+        <test_run module="" package="Tests.Nested Suite.Twice Nested Suite.SuiteD"
+            class="Tests.Nested Suite.Twice Nested Suite.SuiteD" name="Test Case 2" status="Passed"
+            duration="3" />
+        <test_run module="" package="Tests.Nested Suite.Twice Nested Suite.SuiteD"
+            class="Tests.Nested Suite.Twice Nested Suite.SuiteD" name="Test Case 3" status="Passed"
+            duration="3" />
+        <test_run module="" package="Tests.SuiteA" class="Tests.SuiteA"
+            name="Access All Users With Admin Rights" status="Failed" duration="0">
+            <error
+                message="Parent suite setup failed:
+No keyword with name &apos;Connect to Server&apos; found.
+
+Also parent suite teardown failed:
+No keyword with name &apos;Disconnect&apos; found."
+                type="AssertionError"></error>
+        </test_run>
+        <test_run module="" package="Tests.SuiteA" class="Tests.SuiteA"
+            name="Create User With Admin Rights" status="Failed" duration="0">
+            <error
+                message="Parent suite setup failed:
+No keyword with name &apos;Connect to Server&apos; found.
+
+Also parent suite teardown failed:
+No keyword with name &apos;Disconnect&apos; found."
+                type="AssertionError"></error>
+        </test_run>
+        <test_run module="" package="Tests.SuiteA" class="Tests.SuiteA"
+            name="Update User with Admin Rights" status="Failed" duration="0">
+            <error
+                message="Parent suite setup failed:
+No keyword with name &apos;Connect to Server&apos; found.
+
+Also parent suite teardown failed:
+No keyword with name &apos;Disconnect&apos; found."
+                type="AssertionError"></error>
+        </test_run>
+        <test_run module="" package="Tests.SuiteA" class="Tests.SuiteA"
+            name="Update Own Password With User Rights" status="Failed" duration="0">
+            <error
+                message="Parent suite setup failed:
+No keyword with name &apos;Connect to Server&apos; found.
+
+Also parent suite teardown failed:
+No keyword with name &apos;Disconnect&apos; found."
+                type="AssertionError"></error>
+        </test_run>
+        <test_run module="" package="Tests.SuiteA" class="Tests.SuiteA"
+            name="Access Own Details With User Rights" status="Failed" duration="0">
+            <error
+                message="Parent suite setup failed:
+No keyword with name &apos;Connect to Server&apos; found.
+
+Also parent suite teardown failed:
+No keyword with name &apos;Disconnect&apos; found."
+                type="AssertionError"></error>
+        </test_run>
+        <test_run module="" package="Tests.SuiteA" class="Tests.SuiteA"
+            name="Access Other Users Details With User Rights" status="Failed" duration="0">
+            <error
+                message="Parent suite setup failed:
+No keyword with name &apos;Connect to Server&apos; found.
+
+Also parent suite teardown failed:
+No keyword with name &apos;Disconnect&apos; found."
+                type="AssertionError"></error>
+        </test_run>
+        <test_run module="" package="Tests.SuiteB" class="Tests.SuiteB" name="Test Case 1"
+            status="Passed" duration="3" />
+        <test_run module="" package="Tests.SuiteB" class="Tests.SuiteB" name="Test Case 2"
+            status="Passed" duration="3" />
+        <test_run module="" package="Tests.SuiteB" class="Tests.SuiteB" name="Test Case 3"
+            status="Passed" duration="3" />
+    </test_runs>
+</test_result>

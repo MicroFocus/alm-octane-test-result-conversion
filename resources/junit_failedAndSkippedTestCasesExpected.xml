@@ -1,0 +1,21 @@
+<test_result>
+    <build build_id="123" job_id="myJob" server_id="serverId"/>
+    <test_fields>
+        <test_field type="Test_Level" value="Unit Test"/>
+        <test_field type="Test_Type" value="Sanity"/>
+        <test_field type="Framework" value="JUnit"/>
+    </test_fields>
+    <test_runs>
+        <test_run module="" class="me.opopescu.test_octane_github_actions.BooleanCalculatorTest" name="testOr_whenBothFalse" status="Passed" duration="0"/>
+        <test_run module="" class="me.opopescu.test_octane_github_actions.BooleanCalculatorTest" name="testAnd_whenOneFalse" status="Passed" duration="0"/>
+        <test_run module="" class="me.opopescu.test_octane_github_actions.BooleanCalculatorTest" name="testAnd_whenBothTrue" status="Passed" duration="0"/>
+        <test_run module="" class="me.opopescu.test_octane_github_actions.BooleanCalculatorTest" name="testFailed" status="Failed" duration="0">
+            <error type="org.opentest4j.AssertionFailedError:">org.opentest4j.AssertionFailedError: 
+	at me.opopescu.test_octane_github_actions.BooleanCalculatorTest.testFailed(BooleanCalculatorTest.java:27)
+            </error>
+        </test_run>
+        <test_run module="" class="me.opopescu.test_octane_github_actions.BooleanCalculatorTest" name="testOr_whenOneTrue" status="Passed" duration="0"/>
+        <test_run module="" class="me.opopescu.test_octane_github_actions.BooleanCalculatorTest" name="testSkipped" status="Skipped" duration="0"/>
+        <test_run module="" class="me.opopescu.test_octane_github_actions.BooleanCalculatorTest" name="testSkipped2" status="Skipped" duration="0"/>
+    </test_runs>
+</test_result>

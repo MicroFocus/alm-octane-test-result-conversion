@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="SuiteA" tests="6" errors="0" failures="6" skipped="0" time="0.032"
+    timestamp="2025-04-16T11:20:19.330950">
+    <testcase classname="SuiteA" name="Access All Users With Admin Rights" time="0.000">
+        <failure
+            message="Parent suite setup failed:&#10;No keyword with name 'Connect to Server' found.&#10;&#10;Also parent suite teardown failed:&#10;No keyword with name 'Disconnect' found."
+            type="AssertionError" />
+    </testcase>
+    <testcase classname="SuiteA" name="Create User With Admin Rights" time="0.000">
+        <failure
+            message="Parent suite setup failed:&#10;No keyword with name 'Connect to Server' found.&#10;&#10;Also parent suite teardown failed:&#10;No keyword with name 'Disconnect' found."
+            type="AssertionError" />
+    </testcase>
+    <testcase classname="SuiteA" name="Update User with Admin Rights" time="0.000">
+        <failure
+            message="Parent suite setup failed:&#10;No keyword with name 'Connect to Server' found.&#10;&#10;Also parent suite teardown failed:&#10;No keyword with name 'Disconnect' found."
+            type="AssertionError" />
+    </testcase>
+    <testcase classname="SuiteA" name="Update Own Password With User Rights" time="0.000">
+        <failure
+            message="Parent suite setup failed:&#10;No keyword with name 'Connect to Server' found.&#10;&#10;Also parent suite teardown failed:&#10;No keyword with name 'Disconnect' found."
+            type="AssertionError" />
+    </testcase>
+    <testcase classname="SuiteA" name="Access Own Details With User Rights" time="0.000">
+        <failure
+            message="Parent suite setup failed:&#10;No keyword with name 'Connect to Server' found.&#10;&#10;Also parent suite teardown failed:&#10;No keyword with name 'Disconnect' found."
+            type="AssertionError" />
+    </testcase>
+    <testcase classname="SuiteA" name="Access Other Users Details With User Rights" time="0.000">
+        <failure
+            message="Parent suite setup failed:&#10;No keyword with name 'Connect to Server' found.&#10;&#10;Also parent suite teardown failed:&#10;No keyword with name 'Disconnect' found."
+            type="AssertionError" />
+    </testcase>
+    <properties>
+        <property name="Documentation"
+            value="A test suite for valid login.&#10;&#10;Keywords are imported from the resource file" />
+    </properties>
+</testsuite>
