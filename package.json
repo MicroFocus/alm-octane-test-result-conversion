@@ -1,6 +1,6 @@
 {
   "name": "@microfocus/alm-octane-test-result-convertion",
-  "version": "25.2.2",
+  "version": "25.2.3",
   "description": "A NodeJS library for converting different kinds of test reports into OpenText SDP / SDM format.",
   "main": "dist/index.js",
   "scripts": {
@@ -15,6 +15,9 @@
   },
   "type": "commonjs",
   "keywords": [
+    "OpenText",
+    "SDM",
+    "SDP",
     "ALM",
     "Octane",
     "test",
@@ -24,12 +27,12 @@
   ],
   "contributors": [
     {
-      "name": "Silviu-Constantin Anton",
-      "email": "santon@opentext.com"
-    },
-    {
       "name": "Ovidiu Stefan Popescu",
       "email": "opopescu@opentext.com"
+    },
+    {
+      "name": "Silviu-Constantin Anton",
+      "email": "santon@opentext.com"
     }
   ],
   "license": "Apache-2.0",
