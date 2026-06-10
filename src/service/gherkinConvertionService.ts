@@ -38,6 +38,7 @@ import GherkinTestRun from '../model/octane/GherkinTestRun';
 import { FrameworkType } from '../model/common/FrameworkType';
 
 const FAILED_STATUS_LOWER_CASE: string = TestRunResult.FAILED.toLowerCase();
+const SKIPPED_STATUS_LOWER_CASE: string = TestRunResult.SKIPPED.toLowerCase();
 
 /**
  * Convert Gherkin format XML to OpenText SDP / SDM format XML
@@ -138,7 +139,7 @@ const mapTestCaseToOctaneRun = (featureElement: Feature): GherkinTestRun => {
   featureElement._attributes.name = escapeXML(featureElement._attributes.name);
 
   const scenarios = convertToArray(featureElement.scenarios.scenario);
-  scenarios.forEach(scenarioElement => {
+  for (const scenarioElement of scenarios) {
     scenarioElement._attributes.name = escapeXML(scenarioElement._attributes.name);
 
     if (scenarioElement.steps) {
@@ -146,22 +147,32 @@ const mapTestCaseToOctaneRun = (featureElement: Feature): GherkinTestRun => {
       if (steps && steps.length) {
         let scenarioStatus: TestRunResult = TestRunResult.PASSED;
 
-        steps.forEach(stepElement => {
+        for (const stepElement of steps) {
           stepElement._attributes.name = escapeXML(stepElement._attributes.name);
 
           featureDuration += Number(stepElement._attributes.duration);
           if (stepElement._attributes.status.toLowerCase() === FAILED_STATUS_LOWER_CASE) {
             scenarioStatus = TestRunResult.FAILED;
+          } else if (
+            stepElement._attributes.status.toLowerCase() === SKIPPED_STATUS_LOWER_CASE &&
+            scenarioStatus !== TestRunResult.FAILED
+          ) {
+            scenarioStatus = TestRunResult.SKIPPED;
           }
-        });
-        
+        }
+
         scenarioElement._attributes.status = scenarioStatus;
-        if (scenarioStatus.toLowerCase() === FAILED_STATUS_LOWER_CASE) {
-          featureStatus = scenarioStatus;
+        if (scenarioStatus === TestRunResult.FAILED) {
+          featureStatus = TestRunResult.FAILED;
+        } else if (
+          scenarioStatus === TestRunResult.SKIPPED &&
+          featureStatus !== TestRunResult.FAILED
+        ) {
+          featureStatus = TestRunResult.SKIPPED;
         }
       }
     }
-  });
+  }
 
   const testRun: GherkinTestRun = {
     _attributes: {

@@ -36,6 +36,8 @@ import { FrameworkType } from '../../model/common/FrameworkType';
 
 let gherkinWithTwoFeatures: string;
 let expectedGherkinTwoFeatures: string;
+let gherkinWithSkippedScenarios: string;
+let expectedGherkinSkippedScenarios: string;
 const buildConfig: OctaneBuildConfig = {
   build_id: '123',
   job_id: 'myJob',
@@ -50,6 +52,14 @@ beforeAll(() => {
   expectedGherkinTwoFeatures = fs
     .readFileSync(TestResources.GHERKIN_TWO_FEATURES_EXPECTED_PATH)
     .toString();
+
+  gherkinWithSkippedScenarios = fs
+    .readFileSync(TestResources.GHERKIN_SKIPPED_SCENARIOS_PATH)
+    .toString();
+
+  expectedGherkinSkippedScenarios = fs
+    .readFileSync(TestResources.GHERKIN_SKIPPED_SCENARIOS_EXPECTED_PATH)
+    .toString();
 });
 
 describe('Gherkin test results should be correctly converted from Gherkin format to OpenText SDP / SDM Format', () => {
@@ -57,5 +67,11 @@ describe('Gherkin test results should be correctly converted from Gherkin format
     expect(
       formatXml(convertGherkinXMLToOctaneXML(gherkinWithTwoFeatures, buildConfig, FrameworkType.Cucumber))
     ).toBe(formatXml(expectedGherkinTwoFeatures));
+  });
+
+  test('Scenarios with all skipped steps are converted with Skipped status', () => {
+    expect(
+      formatXml(convertGherkinXMLToOctaneXML(gherkinWithSkippedScenarios, buildConfig, FrameworkType.Cucumber))
+    ).toBe(formatXml(expectedGherkinSkippedScenarios));
   });
 });
