@@ -33,7 +33,18 @@ const config: Config.InitialOptions = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   verbose: true,
-  automock: false
+  automock: false,
+  transform: {
+    '^.+\\.(ts|tsx|js|jsx|mjs)$': ['ts-jest', {
+      tsconfig: {
+        allowJs: true,
+        esModuleInterop: true,
+      },
+    }],
+  },
+  transformIgnorePatterns: [
+    'node_modules/(?!(@microfocus|https-proxy-agent|http-cookie-agent|agent-base|proxy-agent-negotiate))',
+  ],
 };
 
 export default config;

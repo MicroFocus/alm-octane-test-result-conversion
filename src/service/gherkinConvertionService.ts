@@ -38,6 +38,7 @@ import GherkinTestRun from '../model/octane/GherkinTestRun';
 import { FrameworkType } from '../model/common/FrameworkType';
 
 const FAILED_STATUS_LOWER_CASE: string = TestRunResult.FAILED.toLowerCase();
+const SKIPPED_STATUS_LOWER_CASE: string = TestRunResult.SKIPPED.toLowerCase();
 
 /**
  * Convert Gherkin format XML to OpenText SDP / SDM format XML
@@ -152,12 +153,16 @@ const mapTestCaseToOctaneRun = (featureElement: Feature): GherkinTestRun => {
           featureDuration += Number(stepElement._attributes.duration);
           if (stepElement._attributes.status.toLowerCase() === FAILED_STATUS_LOWER_CASE) {
             scenarioStatus = TestRunResult.FAILED;
+          } else if (stepElement._attributes.status.toLowerCase() === SKIPPED_STATUS_LOWER_CASE && scenarioStatus !== TestRunResult.FAILED) {
+            scenarioStatus = TestRunResult.SKIPPED;
           }
         });
         
         scenarioElement._attributes.status = scenarioStatus;
         if (scenarioStatus.toLowerCase() === FAILED_STATUS_LOWER_CASE) {
-          featureStatus = scenarioStatus;
+          featureStatus = TestRunResult.FAILED;
+        } else if (scenarioStatus.toLowerCase() === SKIPPED_STATUS_LOWER_CASE && featureStatus !== TestRunResult.FAILED) {
+          featureStatus = TestRunResult.SKIPPED;
         }
       }
     }

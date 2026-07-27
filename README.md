@@ -85,6 +85,10 @@ const convertedXML = convertGherkinXMLToOctaneXML(xml, buildConfig, FrameworkTyp
 
 ## 5. Change log
 
+### 26.3.0
+- Fix issue causing skipped BDD test cases to be published to Octane as passed.
+- Fix vulnerable dependencies
+
 ### 25.2.3
 - Convert RobotFramework test results to **the product's** format XML via the `convertJUnitXMLToOctaneXML` method.
 

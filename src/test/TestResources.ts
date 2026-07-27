@@ -41,6 +41,8 @@ enum TestResources {
   OCTANE_MODEL_CONVERTED_EXPECTED_PATH = 'resources/convertedOctaneModelExpected.xml',
   GHERKIN_TWO_FEATURES_PATH = 'resources/gherkin_twoFeatures.xml',
   GHERKIN_TWO_FEATURES_EXPECTED_PATH = 'resources/gherkin_twoFeaturesExpected.xml',
+  GHERKIN_SKIPPED_SCENARIOS_PATH = 'resources/gherkin_skippedScenarios.xml',
+  GHERKIN_SKIPPED_SCENARIOS_EXPECTED_PATH = 'resources/gherkin_skippedScenariosExpected.xml',
   XUNIT_NESTED_TEST_SUITES_PATH = 'resources/xunit_nestedTestSuites.xml',
   XUNIT_NESTED_TEST_SUITES_EXPECTED_PATH = 'resources/xunit_nestedTestSuitesExpected.xml',
   XUNIT_SINGLE_TEST_SUITE_PATH = 'resources/xunit_singleTestSuite.xml',

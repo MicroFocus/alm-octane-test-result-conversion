@@ -36,6 +36,8 @@ import OctaneBuildConfig from '../OctaneBuildConfig';
 
 let xmlWithTwoTestSuites: string;
 let xmlWithOneTestSuite: string;
+let hasValidCredentials = false;
+
 const buildConfig: OctaneBuildConfig = {
   build_id: '123',
   job_id: 'myJob',
@@ -57,24 +59,52 @@ const validateXMLWithFile = async (
 };
 
 beforeAll(async () => {
-  const octane: Octane = new Octane(
-    JSON.parse(fs.readFileSync(TestResources.OCTANE_CONFIG_PATH).toString())
+  const octaneConfig = JSON.parse(
+    fs.readFileSync(TestResources.OCTANE_CONFIG_PATH).toString()
   );
 
-  const schema = await octane.get('test-results/xsd').execute();
-  fs.writeFileSync(TestResources.OCTANE_RESULT_SCHEMA_PATH, schema);
+  // Check if credentials are configured
+  if (
+    !octaneConfig.server ||
+    !octaneConfig.sharedSpace ||
+    !octaneConfig.workspace ||
+    (!octaneConfig.user && !octaneConfig.tech_preview_API_key)
+  ) {
+    console.warn(
+      'Skipping integration tests: Octane credentials not configured in resources/octaneConfig.json'
+    );
+    return;
+  }
 
-  xmlWithTwoTestSuites = fs
-    .readFileSync(TestResources.JUNIT_TWO_TEST_SUITES_PATH)
-    .toString();
+  try {
+    const octane: Octane = new Octane(octaneConfig);
+    const schema = await octane.get('test-results/xsd').execute();
+    fs.writeFileSync(TestResources.OCTANE_RESULT_SCHEMA_PATH, schema);
 
-  xmlWithOneTestSuite = fs
-    .readFileSync(TestResources.JUNIT_SINGLE_TEST_SUITE_PATH)
-    .toString();
+    xmlWithTwoTestSuites = fs
+      .readFileSync(TestResources.JUNIT_TWO_TEST_SUITES_PATH)
+      .toString();
+
+    xmlWithOneTestSuite = fs
+      .readFileSync(TestResources.JUNIT_SINGLE_TEST_SUITE_PATH)
+      .toString();
+
+    hasValidCredentials = true;
+  } catch (error) {
+    console.warn(
+      'Skipping integration tests: Failed to connect to Octane:',
+      error
+    );
+  }
 });
 
 describe('Converted test results should respect the OpenText SDP / SDM xsd schema', () => {
   test('Result with multiple test suites respects OpenText SDP / SDM xsd schema', async () => {
+    if (!hasValidCredentials) {
+      console.log('Skipping test: Octane credentials not available');
+      return;
+    }
+
     const { err, result } = await validateXMLWithFile(
       convertJUnitXMLToOctaneXML(xmlWithTwoTestSuites, buildConfig),
       TestResources.OCTANE_RESULT_SCHEMA_PATH
@@ -86,6 +116,11 @@ describe('Converted test results should respect the OpenText SDP / SDM xsd schem
   });
 
   test('Result with single test suite respects OpenText SDP / SDM xsd schema', async () => {
+    if (!hasValidCredentials) {
+      console.log('Skipping test: Octane credentials not available');
+      return;
+    }
+
     const { err, result } = await validateXMLWithFile(
       convertJUnitXMLToOctaneXML(xmlWithOneTestSuite, buildConfig),
       TestResources.OCTANE_RESULT_SCHEMA_PATH
