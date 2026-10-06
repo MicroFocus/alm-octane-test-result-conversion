@@ -1,6 +1,6 @@
 {
   "name": "@microfocus/alm-octane-test-result-convertion",
-  "version": "26.3.0",
+  "version": "27.1.0",
   "description": "A NodeJS library for converting different kinds of test reports into OpenText SDP / SDM format.",
   "main": "dist/index.js",
   "scripts": {
@@ -42,7 +42,7 @@
     "@types/node": "^18.11.18",
     "@types/xml-escape": "^1.1.1",
     "@types/xsd-schema-validator": "^0.5.4",
-    "jest": "^30.4.2",
+    "jest": "^30.5.2",
     "ts-jest": "^29.4.11",
     "ts-node": "^10.9.2",
     "typescript": "^4.9.4",

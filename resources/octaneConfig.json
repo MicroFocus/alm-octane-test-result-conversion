@@ -1,7 +1,7 @@
 {
-    "server": "",
-    "sharedSpace": "",
-    "workspace": "",
-    "user": "",
-    "password": ""
+  "server": "",
+  "sharedSpace": 0,
+  "workspace": 0,
+  "user": "",
+  "password": ""
 }

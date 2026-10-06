@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 Open Text.
+ * Copyright 2024-2026 Open Text.
  *
  * The only warranties for products and services of Open Text and
  * its affiliates and licensors (“Open Text”) are as may be set forth
@@ -44,13 +44,16 @@ interface TestRun {
     external_report_url?: string;
     external_test_id?: string;
     external_run_id?: string;
+    run_name?: string;
+    manual?: boolean;
   };
 }
 
 enum TestRunResult {
   PASSED = 'Passed',
   FAILED = 'Failed',
-  SKIPPED = 'Skipped'
+  SKIPPED = 'Skipped',
+  PLANNED = 'Planned'
 }
 
 export { TestRun, TestRunResult };

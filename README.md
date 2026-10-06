@@ -16,6 +16,7 @@ This is a Node.JS library for converting different kinds of test reports into **
   - [4.2. Usage Examples](#42-usage-examples)
     - [4.2.1. Convert JUnit results](#421-convert-junit-results)
     - [4.2.2. Convert Gherkin results](#422-convert-gherkin-results)
+    - [4.2.3. Return build-context and suite-run results](#423-return-build-context-and-suite-run-results)
 - [5. Change log](#5-change-log)
 
 ---
@@ -83,7 +84,42 @@ const xml = fs
 const convertedXML = convertGherkinXMLToOctaneXML(xml, buildConfig, FrameworkType.Cucumber);
 ```
 
+#### 4.2.3. Return build-context and suite-run results
+
+Use the combined converters when you need either or both payloads from one parsed report:
+
+```typescript
+import {
+  convertJUnitXMLToBuildAndSuiteResults,
+  convertGherkinXMLToBuildAndSuiteResults
+} from '@microfocus/alm-octane-test-result-convertion';
+
+const buildConfig = {
+  server_id: 'serverId',
+  job_id: 'myJob',
+  build_id: '123'
+};
+
+const suiteConfig = {
+  suite_id: '456',
+  release_id: '789'
+};
+
+const { buildContextXml, suiteRunXml } = convertJUnitXMLToBuildAndSuiteResults(
+  junitXml,
+  buildConfig,
+  suiteConfig
+);
+```
+
+`buildConfig` requires `server_id`, `job_id`, and `build_id`. `suiteConfig` requires `suite_id` and `release_id`; `program_id`, `milestone_id`, `external_run_id`, and `component` are optional. Provide either configuration or both. The result contains `buildContextXml` for build-context injection and/or `suiteRunXml` for suite-run injection; the two XML payloads never combine `<build>` and `<suite_ref>`.
+
+For one payload only, omit the other configuration. The same API is available for Gherkin using `convertGherkinXMLToBuildAndSuiteResults`.
+
 ## 5. Change log
+
+### 27.1.0
+- Add JUnit and Gherkin converters that return build-context and/or suite-run XML payloads.
 
 ### 26.3.0
 - Fix issue causing skipped BDD test cases to be published to Octane as passed.

@@ -2,7 +2,7 @@
  * Copyright 2024-2026 Open Text.
  *
  * The only warranties for products and services of Open Text and
- * its affiliates and licensors (“Open Text”) are as may be set forth
+ * its affiliates and licensors ("Open Text") are as may be set forth
  * in the express warranty statements accompanying such products and services.
  * Nothing herein should be construed as constituting an additional warranty.
  * Open Text shall not be liable for technical or editorial errors or
@@ -27,16 +27,8 @@
  * limitations under the License.
  */
 
-import TestSuite from './TestSuite';
-
-export default interface TestSuites {
-  testsuite: TestSuite[];
+export default interface ReleaseRef {
   _attributes: {
-    name?: string;
-    time?: string;
-    tests?: string;
-    failures?: string;
-    disabled?: string;
-    errors?: string;
+    id: string;
   };
 }
