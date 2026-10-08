@@ -19,6 +19,13 @@
 			<xs:element name="product_areas" type="productAreasType" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="test_fields" type="fieldsType" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="environment" type="tagsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="quality_stories" type="qualityStoriesType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="covered_tests" type="coveredTestsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="covered_requirement" type="coveredRequirementType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="user_tags" type="userTagsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="run_fields" type="runFieldsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="automated_test_udf_fields" type="automatedTestUDFFieldType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="automated_run_udf_fields" type="automatedRunUDFFieldType" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="test_runs" type="testsType" minOccurs="1" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
@@ -48,17 +55,86 @@
 			<xs:element name="product_area_ref" type="refType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
+    <xs:complexType name="qualityStoriesType">
+        <xs:sequence>
+            <xs:element name="quality_story_ref" type="refType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="userTagsType">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="user_tag_ref" type="refType"/>
+            <xs:element name="user_tag" type="userTagValueType"/>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="userTagValueType">
+        <xs:attribute name="value" type="string255" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="coveredTestsType">
+        <xs:sequence>
+            <xs:element name="covered_test_ref" type="refType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="coveredRequirementType">
+        <xs:sequence>
+            <xs:element name="covered_requirement_ref" type="refType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
 	<xs:complexType name="fieldsType">
-		<xs:sequence>
-			<xs:element name="test_field" type="fieldType" minOccurs="0" maxOccurs="unbounded"/>
-		</xs:sequence>
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="test_field" type="fieldType"/>
+        </xs:sequence>
 	</xs:complexType>
 
+    <xs:complexType name="runFieldsType">
+        <xs:sequence>
+            <xs:choice minOccurs="0">
+                <xs:element name="run_by" type="stringType"/>
+                <xs:element name="run_by_ref" type="refType"/>
+            </xs:choice>
+            <xs:element name="quality_stories" type="qualityStoriesType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="user_tags" type="userTagsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="sprint_ref" type="refType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="environment_ref" type="refType" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
 	<xs:complexType name="fieldType">
-		<xs:attribute name="type" type="testFieldType" use="required"/>
-		<xs:attribute name="value" type="string255" use="required"/>
+		<xs:attribute name="type" type="testFieldTypes" use="required"/>
+		<xs:attribute name="value" type="string0_255" use="required"/>
 	</xs:complexType>
+    <xs:complexType name="refSingleUdfType">
+        <xs:sequence>
+            <xs:element name="udf_field_ref" type="refType"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="refMultiUdfType">
+        <xs:sequence>
+            <xs:element name="udf_field_ref" type="refType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="refSingleUdfValueType">
+        <xs:sequence>
+            <xs:element name="udf_field_value" type="stringType"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="refMultiUdfValueType">
+        <xs:sequence>
+            <xs:element name="udf_field_value" type="stringType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="refSingleChoiceUdfType">
+        <xs:choice>
+            <xs:element name="udf_field_ref" type="refType"/>
+            <xs:element name="udf_field_value" type="stringType"/>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="refMultiChoiceUdfType">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="udf_field_ref" type="refType" maxOccurs="unbounded"/>
+            <xs:element name="udf_field_value" type="stringType" maxOccurs="unbounded"/>
+        </xs:choice>
+    </xs:complexType>
 
 	<xs:complexType name="refType">
 		<xs:attribute name="id" type="xs:long" use="required"/>
@@ -69,6 +145,21 @@
 		<xs:attribute name="external_run_id" type="string0_255" use="optional"/>
 		<xs:attribute name="component" type="string0_255" use="optional"/>
 	</xs:complexType>
+
+    <xs:complexType name="booleanType">
+        <xs:attribute name="value" type="xs:boolean" default="false"/>
+    </xs:complexType>
+
+    <xs:complexType name="integerType">
+        <xs:attribute name="value" type="xs:integer"/>
+    </xs:complexType>
+    <xs:complexType name="stringType">
+        <xs:attribute name="value" type="string255"/>
+    </xs:complexType>
+    <xs:complexType name="longStringType">
+        <xs:attribute name="value" type="string0_1500"/>
+    </xs:complexType>
+
 
 	<xs:simpleType name="string0_255">
 		<xs:restriction base="xs:string">
@@ -83,6 +174,13 @@
 			<xs:minLength value="1"/>
 		</xs:restriction>
 	</xs:simpleType>
+
+    <xs:simpleType name="string0_1500">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="1500"/>
+            <xs:minLength value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
 
 	<xs:simpleType name="string3800">
 		<xs:restriction base="xs:string">
@@ -116,14 +214,24 @@
 		</xs:choice>
 	</xs:complexType>
 
-	<xs:simpleType name="testFieldType">
+	<xs:simpleType name="testFieldTypes">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="Test_Level"/>
 			<xs:enumeration value="Test_Type"/>
 			<xs:enumeration value="Testing_Tool_Type"/>
 			<xs:enumeration value="Framework"/>
+            <xs:enumeration value="User_Tags"/>
+            <!--UDF_REF_BY_VALUE_FIELDS-->
 		</xs:restriction>
 	</xs:simpleType>
+    <xs:simpleType name="testRefFieldTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Quality_Stories"/>
+            <xs:enumeration value="Covered_Requirement"/>
+            <xs:enumeration value="User_Tags"/>
+            <xs:enumeration value="Covered_Manual_Test"/>
+        </xs:restriction>
+    </xs:simpleType>
 	<xs:simpleType name="nativeStatusType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="Passed"/>
@@ -151,8 +259,15 @@
 			<xs:element name="product_areas" type="productAreasType" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="test_fields" type="fieldsType" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="environment" type="tagsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="quality_stories" type="qualityStoriesType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="covered_tests" type="coveredTestsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="covered_requirement" type="coveredRequirementType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="user_tags" type="userTagsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="run_fields" type="runFieldsType" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="error" type="errorType" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="automated_test_udf_fields" type="automatedTestUDFFieldType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="automated_run_udf_fields" type="automatedRunUDFFieldType" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="steps" type="stepsType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute name="module" type="string0_255" use="optional"/>
@@ -269,4 +384,16 @@
 			<xs:minLength value="6"/>
 		</xs:restriction>
 	</xs:simpleType>
+
+
+    <xs:complexType name="automatedTestUDFFieldType">
+        <xs:all>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="automatedRunUDFFieldType">
+        <xs:all>
+        </xs:all>
+    </xs:complexType>
+
 </xs:schema>

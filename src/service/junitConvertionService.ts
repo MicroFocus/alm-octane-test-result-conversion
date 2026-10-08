@@ -43,34 +43,41 @@ import { FrameworkType } from '../model/common/FrameworkType';
 
 /**
  * Convert JUnit format XML to OpenText SDP / SDM format XML
- * @param {string} junitXML - string containing JUnit format XML
+ * @param {string | string[]} junitXML - string containing JUnit format XML, or a list of such strings whose test runs are merged into a single result
  * @param {OctaneBuildConfig} octaneBuildConfig - OpenText SDP / SDM build configuration data (eg.: job id, buiild id, server id etc.)
  * @param {FrameworkType} framework - Testing framework used to run the automated tests
  * @returns {string} - string containing converted XML (returns the OpenText SDP / SDM format XML)
  */
 const convertJUnitXMLToOctaneXML = (
-  junitXML: string,
+  junitXML: string | string[],
   octaneBuildConfig: OctaneBuildConfig,
   framework?: FrameworkType
 ): string => {
-  const junitReportJSON = xml2js(junitXML, { compact: true });
-  const octaneReportJSON = createOctaneTestsResult(
-    <MultipleSuitesRoot | SingleSuiteRoot>junitReportJSON,
-    octaneBuildConfig,
-    framework
-  );
+  const junitXMLs = Array.isArray(junitXML) ? junitXML : [junitXML];
+  const testRuns: TestRun[] = [];
+  junitXMLs.forEach(xml => {
+    const junitReportJSON = xml2js(xml, { compact: true });
+    testRuns.push(
+      ...convertJUnitSuiteToOctaneRuns(
+        <MultipleSuitesRoot | SingleSuiteRoot>junitReportJSON,
+        octaneBuildConfig.external_run_id,
+        framework
+      )
+    );
+  });
+  const octaneReportJSON = createOctaneTestsResult(testRuns, octaneBuildConfig, framework);
   return js2xml(octaneReportJSON, { compact: true });
 };
 
 /**
- * Creates OpenText SDP / SDM test results object from JUnit XML root object
- * @param {MultipleSuitesRoot | SingleSuiteRoot} junitReport - JUnit XML root object
+ * Creates OpenText SDP / SDM test results object from the converted test runs
+ * @param {TestRun[]} testRuns - OpenText SDP / SDM test runs
  * @param {OctaneBuildConfig} buildConfig - OpenText SDP / SDM build configuration data (eg.: job id, buiild id, server id etc.)
  * @param {FrameworkType} framework - Testing framework used to run the automated tests
  * @returns {TestsResult} - OpenText SDP / SDM tests result object to be converted to XML
  */
 const createOctaneTestsResult = (
-  junitReport: MultipleSuitesRoot | SingleSuiteRoot,
+  testRuns: TestRun[],
   buildConfig: OctaneBuildConfig,
   framework?: FrameworkType
 ): TestsResult => {
@@ -105,7 +112,7 @@ const createOctaneTestsResult = (
         ]
       },
       test_runs: {
-        test_run: convertJUnitSuiteToOctaneRuns(junitReport, external_run_id, framework)
+        test_run: testRuns
       }
     }
   };

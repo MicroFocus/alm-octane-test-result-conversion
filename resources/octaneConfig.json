@@ -1,7 +1,7 @@
 {
-  "server": "",
-  "sharedSpace": 0,
-  "workspace": 0,
-  "user": "",
-  "password": ""
+    "server": "https://laura-2.almoctane.com",
+    "sharedSpace": "1001",
+    "workspace": "1002",
+    "user": "Jenkins the Great King_8rgkx12wny3wwi38kowpnmw5l",
+    "password": "i=F7a8PaLORe~4#EvuLQQf"
 }

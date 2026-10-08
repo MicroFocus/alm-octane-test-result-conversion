@@ -56,6 +56,17 @@ export interface SuiteConfig {
 }
 
 /**
+ * Result containing build-context and/or suite-run payloads.
+ * At least one mode payload will always be present.
+ */
+export interface BuildAndSuiteResults {
+  /** Mode A payload (Build Context) - for CI-centric endpoint */
+  buildContextXml?: string;
+  /** Mode B payload (Suite Run) - for workspace-scoped endpoint */
+  suiteRunXml?: string;
+}
+
+/**
  * Builder for ALM Octane test-results XML payloads supporting two modes:
  * - Mode A (build-context): existing behavior, byte-for-byte unchanged
  * - Mode B (suite-run): opt-in mode for suite-scoped result injection
@@ -135,6 +146,19 @@ export class OctaneXmlBuilder {
       );
     }
 
+    const results = this.buildAll();
+    return (this.suiteConfig ? results.suiteRunXml : results.buildContextXml)!;
+  }
+
+  /**
+   * Build the XML payloads for every configured mode (build context and/or suite run).
+   * The test fields and test runs are serialized only once and shared by all payloads;
+   * only the mode-specific header elements differ.
+   *
+   * @returns object with `buildContextXml` and/or `suiteRunXml`
+   * @throws Error if neither mode is configured or the suite config is invalid
+   */
+  buildAll(): BuildAndSuiteResults {
     if (!this.suiteConfig && !this.buildConfig) {
       throw new Error('Must specify either suite config or build config');
     }
@@ -147,21 +171,44 @@ export class OctaneXmlBuilder {
       );
     }
 
+    const bodyXml = js2xml(this.buildBody(), { compact: true });
+    const results: BuildAndSuiteResults = {};
+
+    if (this.buildConfig) {
+      results.buildContextXml = this.wrapPayload(this.buildBuildContextHeader(), bodyXml);
+    }
+
+    if (this.suiteConfig) {
+      results.suiteRunXml = this.wrapPayload(this.buildSuiteHeader(), bodyXml);
+    }
+
+    return results;
+  }
+
+  /**
+   * Wrap the serialized header and body elements in the test_result root element.
+   */
+  private wrapPayload(header: any, bodyXml: string): string {
+    return `<test_result>${js2xml(header, { compact: true })}${bodyXml}</test_result>`;
+  }
+
+  /**
+   * Build the mode-independent part of the payload (test_fields and test_runs).
+   * Element order (schema-enforced): test_fields, test_runs.
+   */
+  private buildBody(): any {
+    const body: any = {};
+
+    if (this.testFields) {
+      body.test_fields = this.testFields;
+    }
+
     // Apply truncation to all test run attributes (255-char limit)
-    const truncatedTestRuns = this.testRuns.map(run => this.truncateTestRunAttributes(run));
+    body.test_runs = {
+      [this.testRunElementName]: this.testRuns.map(run => this.truncateTestRunAttributes(run))
+    };
 
-    // Temporarily replace test runs for XML generation
-    const originalTestRuns = this.testRuns;
-    this.testRuns = truncatedTestRuns;
-
-    const testResultObj = this.suiteConfig
-      ? this.buildSuiteModePayload()
-      : this.buildBuildContextModePayload();
-
-    // Restore original test runs
-    this.testRuns = originalTestRuns;
-
-    return js2xml(testResultObj, { compact: true });
+    return body;
   }
 
   /**
@@ -185,46 +232,28 @@ export class OctaneXmlBuilder {
   }
 
   /**
-   * Build Mode A (build-context) payload.
+   * Build Mode A (build-context) header elements.
    * This maintains exact compatibility with the existing format.
    */
-  private buildBuildContextModePayload(): any {
-    const result: any = {
-      test_result: {}
-    };
-
-    // Element order (schema-enforced): build, suite_ref, ...
-    // Mode A: emit build, skip suite_ref
-    if (this.buildConfig) {
-      result.test_result.build = {
+  private buildBuildContextHeader(): any {
+    return {
+      build: {
         _attributes: this.escapeAttributes(this.buildConfig)
-      };
-    }
-
-    if (this.testFields) {
-      result.test_result.test_fields = this.testFields;
-    }
-
-    result.test_result.test_runs = {
-      [this.testRunElementName]: this.testRuns
+      }
     };
-
-    return result;
   }
 
   /**
-   * Build Mode B (suite run) payload.
+   * Build Mode B (suite run) header elements.
    * Emits suite_ref, program_ref, release_ref, milestone_ref instead of build.
    * Element order is maintained per schema.
    */
-  private buildSuiteModePayload(): any {
+  private buildSuiteHeader(): any {
     if (!this.suiteConfig) {
       throw new Error('Suite config required for suite mode');
     }
 
-    const result: any = {
-      test_result: {}
-    };
+    const header: any = {};
 
     // Element order (schema-enforced): build, suite_ref, program_ref, release_ref, milestone_ref, ...
     // Mode B: skip build, emit suite_ref and refs
@@ -245,13 +274,13 @@ export class OctaneXmlBuilder {
         255
       );
     }
-    result.test_result.suite_ref = {
+    header.suite_ref = {
       _attributes: this.escapeAttributes(suiteRefAttrs)
     };
 
     // program_ref (optional)
     if (this.suiteConfig.program_id) {
-      result.test_result.program_ref = {
+      header.program_ref = {
         _attributes: this.escapeAttributes({
           id: this.truncateToMaxLength(this.suiteConfig.program_id, 255)
         })
@@ -259,7 +288,7 @@ export class OctaneXmlBuilder {
     }
 
     // release_ref (MANDATORY in Mode B)
-    result.test_result.release_ref = {
+    header.release_ref = {
       _attributes: this.escapeAttributes({
         id: this.truncateToMaxLength(this.suiteConfig.release_id, 255)
       })
@@ -267,22 +296,14 @@ export class OctaneXmlBuilder {
 
     // milestone_ref (optional)
     if (this.suiteConfig.milestone_id) {
-      result.test_result.milestone_ref = {
+      header.milestone_ref = {
         _attributes: this.escapeAttributes({
           id: this.truncateToMaxLength(this.suiteConfig.milestone_id, 255)
         })
       };
     }
 
-    if (this.testFields) {
-      result.test_result.test_fields = this.testFields;
-    }
-
-    result.test_result.test_runs = {
-      [this.testRunElementName]: this.testRuns
-    };
-
-    return result;
+    return header;
   }
 
   /**

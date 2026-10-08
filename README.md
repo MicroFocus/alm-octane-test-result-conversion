@@ -17,6 +17,7 @@ This is a Node.JS library for converting different kinds of test reports into **
     - [4.2.1. Convert JUnit results](#421-convert-junit-results)
     - [4.2.2. Convert Gherkin results](#422-convert-gherkin-results)
     - [4.2.3. Return build-context and suite-run results](#423-return-build-context-and-suite-run-results)
+    - [4.2.4. Merge multiple result files](#424-merge-multiple-result-files)
 - [5. Change log](#5-change-log)
 
 ---
@@ -116,7 +117,28 @@ const { buildContextXml, suiteRunXml } = convertJUnitXMLToBuildAndSuiteResults(
 
 For one payload only, omit the other configuration. The same API is available for Gherkin using `convertGherkinXMLToBuildAndSuiteResults`.
 
+#### 4.2.4. Merge multiple result files
+
+All converters accept either a single XML string or an array of XML strings. When an array is passed, the test runs from every file are merged, in order, into a single test results payload. Passing a single string works as before.
+
+```typescript
+const convertedXML = convertJUnitXMLToOctaneXML([firstXml, secondXml], buildConfig, FrameworkType.JUnit);
+
+const { buildContextXml, suiteRunXml } = convertJUnitXMLToBuildAndSuiteResults(
+  [firstXml, secondXml],
+  buildConfig,
+  suiteConfig
+);
+```
+
+For the build-context / suite-run converters, the merged test runs are converted only once and then shared by both payloads; only the `<build>` or `<suite_ref>` / `<release_ref>` / `<program_ref>` / `<milestone_ref>` header elements differ.
+
 ## 5. Change log
+
+### 27.1.1
+- All converters accept multiple test result files (array of XML strings) and merge their test runs into a single payload. Single-file usage is unchanged.
+- Build-context and suite-run payloads are generated from a single conversion of the merged test runs.
+- Fix double escaping of Gherkin feature names in suite-run payloads and missing escaping of build attributes in Gherkin build-context payloads.
 
 ### 27.1.0
 - Add JUnit and Gherkin converters that return build-context and/or suite-run XML payloads.

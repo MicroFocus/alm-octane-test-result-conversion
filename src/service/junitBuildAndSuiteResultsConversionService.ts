@@ -28,22 +28,13 @@
  */
 
 import { xml2js } from 'xml-js';
-import { OctaneXmlBuilder, SuiteConfig, TestFields } from './OctaneXmlBuilder';
+import { BuildAndSuiteResults, OctaneXmlBuilder, SuiteConfig, TestFields } from './OctaneXmlBuilder';
 import { TestRun, TestRunResult } from '../model/octane/TestRun';
 import TestCase from '../model/junit/TestCase';
 import OctaneBuildConfig from './OctaneBuildConfig';
 import { FrameworkType } from '../model/common/FrameworkType';
 
-/**
- * Result containing build-context and/or suite-run payloads.
- * At least one mode payload will always be present.
- */
-export interface BuildAndSuiteResults {
-  /** Mode A payload (Build Context) - for CI-centric endpoint */
-  buildContextXml?: string;
-  /** Mode B payload (Suite Run) - for workspace-scoped endpoint */
-  suiteRunXml?: string;
-}
+export { BuildAndSuiteResults };
 
 /**
  * Convert JUnit test cases to Octane TestRun objects
@@ -99,12 +90,13 @@ function junitTestCasesToOctaneTestRuns(
 /**
  * Convert JUnit XML to build-context and/or suite-run Octane payloads.
  *
- * Parses the JUnit XML once and generates payloads based on provided configuration:
+ * Parses each JUnit XML once, merges all resulting test runs into a single test results
+ * object and serializes it once. The payloads are then generated based on provided configuration:
  * - If buildConfig is provided: generates Mode A payload (CI-centric endpoint)
  * - If suiteConfig is provided: generates Mode B payload (workspace-scoped endpoint)
- * - If both are provided: generates both payloads from the same parsed data
+ * - If both are provided: generates both payloads from the same serialized test runs
  *
- * @param {string} junitXML - JUnit format XML
+ * @param {string | string[]} junitXML - JUnit format XML, or a list of JUnit format XMLs to be merged
  * @param {OctaneBuildConfig} buildConfig - Build context configuration for Mode A (optional)
  * @param {SuiteConfig} suiteConfig - Suite configuration for Mode B (optional)
  * @param {TestFields} testFields - Optional test fields to include in payloads
@@ -129,7 +121,7 @@ function junitTestCasesToOctaneTestRuns(
  * POST result.suiteRunXml to workspace-scoped endpoint
  */
 const convertJUnitXMLToBuildAndSuiteResults = (
-  junitXML: string,
+  junitXML: string | string[],
   buildConfig?: OctaneBuildConfig,
   suiteConfig?: SuiteConfig,
   testFields?: TestFields,
@@ -141,13 +133,14 @@ const convertJUnitXMLToBuildAndSuiteResults = (
     );
   }
 
-  // Parse JUnit XML once
-  const junitReportJSON = xml2js(junitXML, { compact: true }) as any;
-  const testSuite = junitReportJSON.testsuite;
-
-  // Extract test cases once
-  const testCases = testSuite.testcase;
-  const octaneTestRuns = junitTestCasesToOctaneTestRuns(testCases);
+  const junitXMLs = Array.isArray(junitXML) ? junitXML : [junitXML];
+  const octaneTestRuns: TestRun[] = [];
+  junitXMLs.forEach((xml) => {
+    const junitReportJSON = xml2js(xml, { compact: true }) as any;
+    octaneTestRuns.push(
+      ...junitTestCasesToOctaneTestRuns(junitReportJSON.testsuite.testcase)
+    );
+  });
 
   // Default test fields if not provided
   const fields = testFields || {
@@ -173,27 +166,17 @@ const convertJUnitXMLToBuildAndSuiteResults = (
     ]
   };
 
-  const result: BuildAndSuiteResults = {};
-
-  // Build Mode A (Build Context) payload if buildConfig is provided
+  const builder = new OctaneXmlBuilder()
+    .withTestRuns(octaneTestRuns)
+    .withTestFields(fields);
   if (buildConfig) {
-    result.buildContextXml = new OctaneXmlBuilder()
-      .withBuildConfig(buildConfig)
-      .withTestRuns(octaneTestRuns)
-      .withTestFields(fields)
-      .build();
+    builder.withBuildConfig(buildConfig);
   }
-
-  // Build Mode B (Suite Run) payload if suiteConfig is provided
   if (suiteConfig) {
-    result.suiteRunXml = new OctaneXmlBuilder()
-      .withSuiteConfig(suiteConfig)
-      .withTestRuns(octaneTestRuns)
-      .withTestFields(fields)
-      .build();
+    builder.withSuiteConfig(suiteConfig);
   }
 
-  return result;
+  return builder.buildAll();
 };
 
 export default convertJUnitXMLToBuildAndSuiteResults;

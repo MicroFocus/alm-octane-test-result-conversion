@@ -42,34 +42,35 @@ const SKIPPED_STATUS_LOWER_CASE: string = TestRunResult.SKIPPED.toLowerCase();
 
 /**
  * Convert Gherkin format XML to OpenText SDP / SDM format XML
- * @param {string} gherkinXML - string containing Gherkin format XML
+ * @param {string | string[]} gherkinXML - string containing Gherkin format XML, or a list of such strings whose test runs are merged into a single result
  * @param {OctaneBuildConfig} octaneBuildConfig - OpenText SDP / SDM build configuration data (eg.: job id, buiild id, server id etc.)
  * @param {FrameworkType} framework - Testing framework used to run the automated tests
  * @returns {string} - string containing converted XML (returns the OpenText SDP / SDM format XML)
  */
 const convertGherkinXMLToOctaneXML = (
-  gherkinXML: string,
+  gherkinXML: string | string[],
   octaneBuildConfig: OctaneBuildConfig,
   framework: FrameworkType
 ): string => {
-  const gherkinReportJSON = xml2js(gherkinXML, { compact: true });
-  const octaneReportJSON = createOctaneTestsResult(
-    <MultipleFeaturesRoot>gherkinReportJSON,
-    octaneBuildConfig,
-    framework
-  );
+  const gherkinXMLs = Array.isArray(gherkinXML) ? gherkinXML : [gherkinXML];
+  const testRuns: GherkinTestRun[] = [];
+  gherkinXMLs.forEach(xml => {
+    const gherkinReportJSON = xml2js(xml, { compact: true });
+    testRuns.push(...convertGherkinSuiteToOctaneRuns(<MultipleFeaturesRoot>gherkinReportJSON));
+  });
+  const octaneReportJSON = createOctaneTestsResult(testRuns, octaneBuildConfig, framework);
   return js2xml(octaneReportJSON, { compact: true });
 };
 
 /**
- * Creates OpenText SDP / SDM test results object from Gherkin XML root object
- * @param {MultipleFeaturesRoot} gherkinReport - Gherkin XML root object
+ * Creates OpenText SDP / SDM test results object from the converted Gherkin test runs
+ * @param {GherkinTestRun[]} testRuns - OpenText SDP / SDM Gherkin test runs
  * @param {OctaneBuildConfig} buildConfig - OpenText SDP / SDM build configuration data (eg.: job id, build id, server id etc.)
  * @param {FrameworkType} framework - Testing framework used to run the automated tests
  * @returns {TestsResult} - OpenText SDP / SDM tests result object to be converted to XML
  */
 const createOctaneTestsResult = (
-  gherkinReport: MultipleFeaturesRoot,
+  testRuns: GherkinTestRun[],
   buildConfig: OctaneBuildConfig,
   framework: FrameworkType
 ): TestsResult => {
@@ -103,7 +104,7 @@ const createOctaneTestsResult = (
         ]
       },
       test_runs: {
-        gherkin_test_run: convertGherkinSuiteToOctaneRuns(gherkinReport)
+        gherkin_test_run: testRuns
       }
     }
   };

@@ -28,10 +28,9 @@
  */
 
 import escapeXML from 'xml-escape';
-import { js2xml, xml2js } from 'xml-js';
-import { OctaneXmlBuilder, SuiteConfig, TestFields } from './OctaneXmlBuilder';
+import { xml2js } from 'xml-js';
+import { BuildAndSuiteResults, OctaneXmlBuilder, SuiteConfig, TestFields } from './OctaneXmlBuilder';
 import { TestRunResult } from '../model/octane/TestRun';
-import TestsResult from '../model/octane/TestsResult';
 import OctaneBuildConfig from './OctaneBuildConfig';
 import MultipleFeaturesRoot from '../model/gherkin/MultipleFeaturesRoot';
 import Feature from '../model/gherkin/Feature';
@@ -40,16 +39,7 @@ import { FrameworkType } from '../model/common/FrameworkType';
 
 const FAILED_STATUS_LOWER_CASE: string = TestRunResult.FAILED.toLowerCase();
 
-/**
- * Result containing build-context and/or suite-run payloads.
- * At least one mode payload will always be present.
- */
-export interface BuildAndSuiteResults {
-  /** Mode A payload (Build Context) - for CI-centric endpoint */
-  buildContextXml?: string;
-  /** Mode B payload (Suite Run) - for workspace-scoped endpoint */
-  suiteRunXml?: string;
-}
+export { BuildAndSuiteResults };
 
 /**
  * Converts Gherkin features to Octane GherkinTestRun objects
@@ -71,7 +61,9 @@ const mapTestCaseToOctaneRun = (featureElement: Feature): GherkinTestRun => {
   let featureDuration: number = 0;
   let featureStatus: TestRunResult = TestRunResult.PASSED;
 
-  featureElement._attributes.name = escapeXML(featureElement._attributes.name);
+  // The run attributes are escaped by OctaneXmlBuilder, so keep the raw name for the run
+  const featureName = featureElement._attributes.name;
+  featureElement._attributes.name = escapeXML(featureName);
 
   const scenarios = Array.isArray(featureElement.scenarios?.scenario)
     ? featureElement.scenarios.scenario
@@ -107,7 +99,7 @@ const mapTestCaseToOctaneRun = (featureElement: Feature): GherkinTestRun => {
 
   const testRun: GherkinTestRun = {
     _attributes: {
-      name: featureElement._attributes.name,
+      name: featureName,
       duration: featureDuration,
       status: featureStatus
     },
@@ -120,12 +112,13 @@ const mapTestCaseToOctaneRun = (featureElement: Feature): GherkinTestRun => {
 /**
  * Convert Gherkin XML to build-context and/or suite-run Octane payloads.
  *
- * Parses the Gherkin XML once and generates payloads based on provided configuration:
+ * Parses each Gherkin XML once, merges all resulting test runs into a single test results
+ * object and serializes it once. The payloads are then generated based on provided configuration:
  * - If buildConfig is provided: generates Mode A payload (CI-centric endpoint)
  * - If suiteConfig is provided: generates Mode B payload (workspace-scoped endpoint)
- * - If both are provided: generates both payloads from the same parsed data
+ * - If both are provided: generates both payloads from the same serialized test runs
  *
- * @param {string} gherkinXML - Gherkin format XML
+ * @param {string | string[]} gherkinXML - Gherkin format XML, or a list of Gherkin format XMLs to be merged
  * @param {OctaneBuildConfig} buildConfig - Build context configuration for Mode A (optional)
  * @param {SuiteConfig} suiteConfig - Suite configuration for Mode B (optional)
  * @param {TestFields} testFields - Optional test fields to include in payloads
@@ -150,7 +143,7 @@ const mapTestCaseToOctaneRun = (featureElement: Feature): GherkinTestRun => {
  * POST result.suiteRunXml to workspace-scoped endpoint
  */
 const convertGherkinXMLToBuildAndSuiteResults = (
-  gherkinXML: string,
+  gherkinXML: string | string[],
   buildConfig?: OctaneBuildConfig,
   suiteConfig?: SuiteConfig,
   testFields?: TestFields,
@@ -162,17 +155,15 @@ const convertGherkinXMLToBuildAndSuiteResults = (
     );
   }
 
-  // Parse Gherkin XML once
-  const gherkinReportJSON = xml2js(gherkinXML, { compact: true }) as any;
-  const featuresRoot: MultipleFeaturesRoot = gherkinReportJSON;
-
-  // Extract features
-  const features = Array.isArray(featuresRoot.features.feature)
-    ? featuresRoot.features.feature
-    : [featuresRoot.features.feature];
-
-  // Convert to Octane runs once
-  const gherkinTestRuns = convertGherkinSuiteToOctaneRuns(features);
+  const gherkinXMLs = Array.isArray(gherkinXML) ? gherkinXML : [gherkinXML];
+  const gherkinTestRuns: GherkinTestRun[] = [];
+  gherkinXMLs.forEach((xml) => {
+    const featuresRoot = xml2js(xml, { compact: true }) as MultipleFeaturesRoot;
+    const features = Array.isArray(featuresRoot.features.feature)
+      ? featuresRoot.features.feature
+      : [featuresRoot.features.feature];
+    gherkinTestRuns.push(...convertGherkinSuiteToOctaneRuns(features));
+  });
 
   // Default test fields if not provided
   const fields = testFields || {
@@ -198,36 +189,18 @@ const convertGherkinXMLToBuildAndSuiteResults = (
     ]
   };
 
-  const result: BuildAndSuiteResults = {};
-
-  // Build Mode A (Build Context) payload if buildConfig is provided
+  // GherkinTestRun is compatible with TestRun interface
+  const builder = new OctaneXmlBuilder()
+    .withGherkinTestRuns(gherkinTestRuns as any)
+    .withTestFields(fields);
   if (buildConfig) {
-    const buildContextPayload: TestsResult = {
-      test_result: {
-        build: {
-          _attributes: {
-            ...buildConfig
-          }
-        },
-        test_fields: fields,
-        test_runs: {
-          gherkin_test_run: gherkinTestRuns
-        }
-      }
-    };
-    result.buildContextXml = js2xml(buildContextPayload, { compact: true });
+    builder.withBuildConfig(buildConfig);
   }
-
-  // Build Mode B (Suite Run) payload if suiteConfig is provided
   if (suiteConfig) {
-    result.suiteRunXml = new OctaneXmlBuilder()
-      .withSuiteConfig(suiteConfig)
-      .withGherkinTestRuns(gherkinTestRuns as any) // GherkinTestRun is compatible with TestRun interface
-      .withTestFields(fields)
-      .build();
+    builder.withSuiteConfig(suiteConfig);
   }
 
-  return result;
+  return builder.buildAll();
 };
 
 export default convertGherkinXMLToBuildAndSuiteResults;
